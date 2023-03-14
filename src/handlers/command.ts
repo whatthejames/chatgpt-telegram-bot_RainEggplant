@@ -9,6 +9,7 @@ import {
   rolesMap,
   setNowRole,
 } from '../promptsRole';
+import {globalConfig} from '../GlobalConfig';
 
 class CommandHandler {
   debug: number;
@@ -59,10 +60,13 @@ class CommandHandler {
             'System Role Config\n' +
             '  • /roles list all roles , use this to list all available roles.\n' +
             '  • /role now role.\n' +
-            '  • /roleInfo more now role info.\n' +
+            '  • /role_info more now role info.\n' +
             `now role is ${getNowRole().role} [ /role_${
               getNowRole().shortName
             } ]\n` +
+            'Conversation Context\n' +
+            '  • /get_context get a save point for Context.\n' +
+            '  • /print_save_point print Save Point Every Message.\n' +
             ''
         );
         break;
@@ -87,7 +91,7 @@ class CommandHandler {
         );
         break;
 
-      case '/roleInfo':
+      case '/role_info':
         await this._bot.sendMessage(
           msg.chat.id,
           `now role is ${getNowRole().role} [ /role_${getNowRole().shortName} ]`
@@ -108,6 +112,24 @@ class CommandHandler {
           '🔄 The chat thread has been reset. New chat thread started.'
         );
         logWithTime(`🔄 Chat thread reset by ${userInfo}.`);
+        break;
+
+      case '/get_context':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          'you can use follow cmd to restore conversation.\n' +
+            'you can restore conversation after server restart only if redis work well.\n' +
+            `Context:\`/resetContext_${this._api.getContext()}\``
+        );
+        break;
+
+      case '/print_save_point':
+        globalConfig.printSavePointEveryMessage =
+          !globalConfig.printSavePointEveryMessage;
+        await this._bot.sendMessage(
+          msg.chat.id,
+          `now printSavePointEveryMessage is: ${globalConfig.printSavePointEveryMessage}`
+        );
         break;
 
       case '/reload':
@@ -148,6 +170,19 @@ class CommandHandler {
             );
           }
           break;
+        }
+        if (command.startsWith('/resetContext_')) {
+          const old = this._api.getContext();
+          const cc = command.replace(/^\/resetContext_/, '');
+          if (await this._api.resetContext(cc)) {
+            await this._bot.sendMessage(
+              msg.chat.id,
+              `resetContext ok,\n` +
+                `the old Context is:\`/resetContext_${old}\``
+            );
+          } else {
+            await this._bot.sendMessage(msg.chat.id, `resetContext failed.`);
+          }
         }
         await this._bot.sendMessage(
           msg.chat.id,

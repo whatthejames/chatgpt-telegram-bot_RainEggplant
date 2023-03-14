@@ -88,6 +88,12 @@ class ChatHandler {
           {leading: true, trailing: false}
         )
       );
+
+      await this._bot.sendMessage(
+        chatId,
+        `SavePoint:\`/resetContext_${this._api.getContext()}\``
+      );
+
       const resText =
         this._api.apiType == 'browser'
           ? (res as ChatResponseV3).response

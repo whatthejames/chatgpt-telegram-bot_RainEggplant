@@ -16,7 +16,7 @@ import {
 import {logWithTime} from './utils';
 import Keyv from 'keyv';
 import {getNowRole, getRolePrompt} from './promptsRole';
-import {ChatGPTAPIOptions, ChatMessage} from 'chatgpt';
+import {ChatGPTAPIOptions} from 'chatgpt';
 
 interface ChatContext {
   conversationId?: string;
@@ -37,13 +37,30 @@ class ChatGPT {
   protected _apiUnofficialProxy: ChatGPTUnofficialProxyAPI | undefined;
   protected _context: ChatContext = {};
   protected _timeoutMs: number | undefined;
+  protected keyv: Keyv;
 
   constructor(apiOpts: APIOptions, debug = 1) {
     this.debug = debug;
     this.apiType = apiOpts.type;
     this._opts = apiOpts;
     this._timeoutMs = undefined;
+
+    this.keyv = new Keyv('redis://127.0.0.1:6379');
+    this.keyv.on('error', (e: any) => {
+      console.error(e);
+    });
   }
+
+  getMessageById = async (id: string): Promise<ChatResponseV4 | undefined> => {
+    const m = await this.keyv.get(id);
+    console.log('getMessageById id:', id, m);
+    return m;
+  };
+
+  upsertMessage = async (message: ChatResponseV4) => {
+    console.log('upsertMessage message:', message);
+    await this.keyv.set(message.id, message);
+  };
 
   init = async () => {
     if (this._opts.type == 'browser') {
@@ -57,24 +74,16 @@ class ChatGPT {
     } else if (this._opts.type == 'official') {
       const {ChatGPTAPI} = await import('chatgpt');
 
-      const keyv = new Keyv('redis://127.0.0.1:6379');
-      keyv.on('error', (e: any) => {
-        console.error(e);
-      });
-
       this._apiOfficial = new ChatGPTAPI({
         ...this._opts.official,
-        messageStore: keyv,
+        messageStore: this.keyv,
         debug: true,
         systemMessage: getRolePrompt(getNowRole()),
         getMessageById: async (id: string) => {
-          const m = await keyv.get(id);
-          console.log('getMessageById id:', id, m);
-          return m;
+          return this.getMessageById(id);
         },
-        upsertMessage: async (message: ChatMessage) => {
-          console.log('upsertMessage message:', message);
-          await keyv.set(message.id, message);
+        upsertMessage: async (message: ChatResponseV4) => {
+          await this.upsertMessage(message);
         },
       } as ChatGPTAPIOptions);
       this._api = this._apiOfficial;
@@ -112,7 +121,14 @@ class ChatGPT {
         timeoutMs: this._timeoutMs,
         systemMessage: getRolePrompt(getNowRole()),
       });
-      console.log('res', [res.role, res.detail]);
+      console.log('res', [
+        res.role,
+        res.name,
+        res.parentMessageId,
+        res.conversationId,
+        res.delta,
+        res.detail,
+      ]);
     } else {
       res = await this._api.sendMessage(text, {
         ...this._context,
@@ -146,6 +162,40 @@ class ChatGPT {
       await this._apiBrowser.refreshSession();
     }
   };
+
+  getContext() {
+    return Buffer.from(
+      `${this._context.conversationId || ''}:::${
+        this._context.parentMessageId || ''
+      }`
+    ).toString('base64');
+  }
+
+  async resetContext(c: string) {
+    try {
+      const cc = Buffer.from(c, 'base64').toString('utf-8').split(':::');
+      if (cc && cc.length !== 2) {
+        return false;
+      }
+      const conversationId = cc[0] && cc[0].length > 0 ? cc[0] : undefined;
+      const parentMessageId = cc[1] && cc[1].length > 0 ? cc[1] : undefined;
+      if (!parentMessageId) {
+        return false;
+      }
+      const m = await this.getMessageById(parentMessageId);
+      if (m) {
+        return false;
+      }
+      this._context = {
+        conversationId,
+        parentMessageId,
+      };
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
 }
 
 export {ChatGPT};
