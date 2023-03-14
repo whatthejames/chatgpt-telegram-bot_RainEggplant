@@ -25,9 +25,10 @@ async function main() {
   });
 
   {
-    globalConfig.printSavePointEveryMessage = !!(await keyv.get(
-      'globalConfig:printSavePointEveryMessage'
-    ));
+    const pr = await keyv.get('globalConfig:printSavePointEveryMessage');
+    if (pr !== undefined) {
+      globalConfig.printSavePointEveryMessage = pr;
+    }
     await keyv.set(
       'globalConfig:printSavePointEveryMessage',
       globalConfig.printSavePointEveryMessage
