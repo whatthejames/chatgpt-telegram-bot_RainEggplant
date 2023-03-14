@@ -26,6 +26,7 @@ specifiers:
   prettier: ^2.8.4
   promise-queue: ^2.2.5
   puppeteer: ^19.7.3
+  quick-lru: ^6.1.1
   telegramify-markdown: ^1.0.6
   tsc-watch: ^6.0.0
   typescript: ^4.9.5
@@ -42,6 +43,7 @@ dependencies:
   node-fetch: 3.3.0
   node-telegram-bot-api: 0.60.0
   promise-queue: 2.2.5
+  quick-lru: 6.1.1
   telegramify-markdown: 1.0.6
 
 optionalDependencies:

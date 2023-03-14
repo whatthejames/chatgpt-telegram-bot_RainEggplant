@@ -18,8 +18,6 @@ import Keyv from 'keyv';
 // import KeyvRedis from '@keyv/redis';
 import {getNowRole, getRolePrompt} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import QuickLRU from 'quick-lru';
 
 interface ChatContext {
