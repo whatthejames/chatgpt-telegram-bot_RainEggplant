@@ -112,7 +112,7 @@ export const setCustom = async (prompt: string, storage: Keyv) => {
       nn.prompt = prompt;
       await storage.set(
         `CustomRole:History-${moment().format('YYYYMMDD_HHmmSS')}`,
-        JSON.stringify(nn)
+        nn
       );
     }
   }
@@ -121,7 +121,7 @@ export const loadCustomFromStorage = async (storage: Keyv) => {
   const r = await storage.get('CustomRole');
   if (r) {
     try {
-      const c = JSON.parse(r) as RoleInfo;
+      const c = r as RoleInfo;
       if (c.role && c.shortName && c.shortName === 'custom') {
         const n = rolesMap.get('custom');
         if (n) {
@@ -139,6 +139,6 @@ export const loadCustomFromStorage = async (storage: Keyv) => {
 export const saveCustomFrom = async (storage: Keyv) => {
   const n = rolesMap.get('custom');
   if (n) {
-    await storage.set('CustomRole', JSON.stringify(n));
+    await storage.set('CustomRole', n);
   }
 };
