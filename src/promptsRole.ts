@@ -1,6 +1,8 @@
 import {Buffer} from 'buffer';
 import Keyv from 'keyv';
 import moment from 'moment';
+import fs from 'fs';
+import {promisify} from 'util';
 
 export interface RoleInfo {
   role: string;
@@ -87,9 +89,14 @@ export const roles: RoleInfo[] = [
 
 export const rolesMap = new Map<string, RoleInfo>();
 
-roles.forEach((T) => rolesMap.set(T.shortName, T));
+let nowRole_: RoleInfo;
 
-let nowRole_: RoleInfo = roles[0];
+const init = (roles: RoleInfo[]) => {
+  roles.forEach((T) => rolesMap.set(T.shortName, T));
+  nowRole_ = rolesMap.get('default')!;
+};
+init(roles);
+
 export const getNowRole = () => {
   return nowRole_;
 };
@@ -140,5 +147,21 @@ export const saveCustomFrom = async (storage: Keyv) => {
   const n = rolesMap.get('custom');
   if (n) {
     await storage.set('CustomRole', n);
+  }
+};
+
+export const loadFromJsonFile = async () => {
+  const s = await promisify(fs.readFile)('prompts.json', 'utf-8');
+  try {
+    const j: RoleInfo[] = JSON.parse(s);
+    if (
+      !j.find((T) => {
+        return T.role.length > 0 && T.shortName.length > 0;
+      })
+    ) {
+      init(j);
+    }
+  } catch (e) {
+    console.error(e);
   }
 };

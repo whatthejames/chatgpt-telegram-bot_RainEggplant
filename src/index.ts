@@ -5,11 +5,14 @@ import {loadConfig} from './utils';
 import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';
 import {globalConfig} from './GlobalConfig';
+import {loadFromJsonFile} from './promptsRole';
 
 let keyv: Keyv;
 
 async function main() {
   const opts = loadConfig();
+
+  await loadFromJsonFile();
 
   if (opts.redis && opts.redis.length > 0) {
     keyv = new Keyv(opts.redis);
