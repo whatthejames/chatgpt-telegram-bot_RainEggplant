@@ -135,6 +135,10 @@ class CommandHandler {
           msg.chat.id,
           `now printSavePointEveryMessage is: ${globalConfig.printSavePointEveryMessage}`
         );
+        await this._api.keyv.set(
+          'globalConfig:printSavePointEveryMessage',
+          globalConfig.printSavePointEveryMessage
+        );
         break;
 
       case '/system_custom':
