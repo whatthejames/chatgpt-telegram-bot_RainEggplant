@@ -130,8 +130,13 @@ dist
 .pnp.*
 
 
+# IDEA
+
+.idea/**/*
+
 # Misc
 .DS_Store
 
 # Config files
 config/local*.json
+tool
