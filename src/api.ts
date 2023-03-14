@@ -14,7 +14,7 @@ import {
   APIUnofficialOptions,
 } from './types';
 import {logWithTime} from './utils';
-import Keyv from 'keyv';
+import Keyv, {Store} from 'keyv';
 // import KeyvRedis from '@keyv/redis';
 import {getNowRole, getRolePrompt} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
@@ -52,7 +52,7 @@ class ChatGPT {
     } else {
       // same as npm chatgpt package
       this.keyv = new Keyv({
-        store: new QuickLRU({maxSize: 1e4}),
+        store: new QuickLRU({maxSize: 1e4}) as Store<string | undefined>,
       });
     }
     // (this.keyv.opts.store as KeyvRedis)?.redis;
