@@ -177,8 +177,7 @@ class CommandHandler {
           if (await this._api.resetContext(cc)) {
             await this._bot.sendMessage(
               msg.chat.id,
-              `resetContext ok,\n` +
-                `the old Context is: /resetContext_${old} `
+              `resetContext ok,\n` + `the old Context is: /resetContext_${old} `
             );
           } else {
             await this._bot.sendMessage(msg.chat.id, `resetContext failed.`);

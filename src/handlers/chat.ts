@@ -7,6 +7,7 @@ import type {ChatGPT} from '../api';
 import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
 import Queue from 'promise-queue';
+import {globalConfig} from '../GlobalConfig';
 
 class ChatHandler {
   debug: number;
@@ -89,10 +90,12 @@ class ChatHandler {
         )
       );
 
-      await this._bot.sendMessage(
-        chatId,
-        `SavePoint:\`/resetContext_${this._api.getContext()}\``
-      );
+      if (globalConfig.printSavePointEveryMessage) {
+        await this._bot.sendMessage(
+          chatId,
+          `SavePoint:\`/resetContext_${this._api.getContext()}\``
+        );
+      }
 
       const resText =
         this._api.apiType == 'browser'
