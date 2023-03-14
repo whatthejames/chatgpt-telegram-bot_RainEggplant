@@ -2,12 +2,40 @@ import TelegramBot from 'node-telegram-bot-api';
 import {ChatGPT} from './api';
 import {MessageHandler} from './handlers/message';
 import {loadConfig} from './utils';
+import Keyv, {Store} from 'keyv';
+import QuickLRU from 'quick-lru';
+import {globalConfig} from './GlobalConfig';
+
+let keyv: Keyv;
 
 async function main() {
   const opts = loadConfig();
 
+  if (opts.redis && opts.redis.length > 0) {
+    keyv = new Keyv(opts.redis);
+  } else {
+    // same as npm chatgpt package
+    keyv = new Keyv({
+      store: new QuickLRU({maxSize: 1e4}) as Store<string | undefined>,
+    });
+  }
+  // (this.keyv.opts.store as KeyvRedis)?.redis;
+  keyv.on('error', (e: any) => {
+    console.error(e);
+  });
+
+  {
+    globalConfig.printSavePointEveryMessage = !!(await keyv.get(
+      'globalConfig:printSavePointEveryMessage'
+    ));
+    await keyv.set(
+      'globalConfig:printSavePointEveryMessage',
+      globalConfig.printSavePointEveryMessage
+    );
+  }
+
   // Initialize ChatGPT API.
-  const api = new ChatGPT(opts.api, opts.redis);
+  const api = new ChatGPT(opts.api, keyv);
   await api.init();
 
   // Initialize Telegram Bot and message handler.

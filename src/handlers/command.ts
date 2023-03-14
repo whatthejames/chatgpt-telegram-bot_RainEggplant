@@ -7,6 +7,8 @@ import {
   getRolePrompt,
   roles,
   rolesMap,
+  saveCustomFrom,
+  setCustom,
   setNowRole,
 } from '../promptsRole';
 import {globalConfig} from '../GlobalConfig';
@@ -131,6 +133,19 @@ class CommandHandler {
           msg.chat.id,
           `now printSavePointEveryMessage is: ${globalConfig.printSavePointEveryMessage}`
         );
+        break;
+
+      case '/system_custom':
+        {
+          let text = msg.text ?? '';
+          for (const entity of msg.entities ?? []) {
+            if (entity.type == 'bot_command' && entity.offset == 0) {
+              text = msg.text?.slice(entity.length).trim() ?? '';
+            }
+          }
+          await setCustom(text, this._api.keyv);
+          await this._bot.sendMessage(msg.chat.id, `ok`);
+        }
         break;
 
       case '/reload':

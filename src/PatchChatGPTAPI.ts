@@ -55,8 +55,8 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     let {parentMessageId} = opts;
 
     const userLabel = USER_LABEL_DEFAULT;
-    const assistantLabel = getNowRole().prompt
-      ? getNowRole().role || ASSISTANT_LABEL_DEFAULT
+    const assistantLabel = getNowRole().userName
+      ? getNowRole().userName || ASSISTANT_LABEL_DEFAULT
       : ASSISTANT_LABEL_DEFAULT;
 
     const maxNumTokens = this._maxModelTokens - this._maxResponseTokens;

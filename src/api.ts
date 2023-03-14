@@ -16,7 +16,7 @@ import {
 import {logWithTime} from './utils';
 import Keyv, {Store} from 'keyv';
 // import KeyvRedis from '@keyv/redis';
-import {getNowRole, getRolePrompt} from './promptsRole';
+import {getNowRole, getRolePrompt, loadCustomFromStorage} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import QuickLRU from 'quick-lru';
 import {toPatchChatGPTAPI} from './PatchChatGPTAPI';
@@ -40,26 +40,15 @@ class ChatGPT {
   protected _apiUnofficialProxy: ChatGPTUnofficialProxyAPI | undefined;
   protected _context: ChatContext = {};
   protected _timeoutMs: number | undefined;
-  protected keyv: Keyv;
+  public keyv: Keyv;
 
-  constructor(apiOpts: APIOptions, databasePath = '', debug = 1) {
+  constructor(apiOpts: APIOptions, keyv: Keyv, debug = 1) {
     this.debug = debug;
     this.apiType = apiOpts.type;
     this._opts = apiOpts;
     this._timeoutMs = undefined;
 
-    if (databasePath.length > 0) {
-      this.keyv = new Keyv(databasePath);
-    } else {
-      // same as npm chatgpt package
-      this.keyv = new Keyv({
-        store: new QuickLRU({maxSize: 1e4}) as Store<string | undefined>,
-      });
-    }
-    // (this.keyv.opts.store as KeyvRedis)?.redis;
-    this.keyv.on('error', (e: any) => {
-      console.error(e);
-    });
+    this.keyv = keyv;
   }
 
   getMessageById = async (id: string): Promise<ChatResponseV4 | undefined> => {
@@ -74,6 +63,8 @@ class ChatGPT {
   };
 
   init = async () => {
+    await loadCustomFromStorage(this.keyv);
+
     if (this._opts.type == 'browser') {
       const {ChatGPTAPIBrowser} = await import('chatgpt-v3');
       this._apiBrowser = new ChatGPTAPIBrowser(
