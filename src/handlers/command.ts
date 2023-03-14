@@ -117,8 +117,8 @@ class CommandHandler {
       case '/get_context':
         await this._bot.sendMessage(
           msg.chat.id,
-          'you can use follow cmd to restore conversation.\n' +
-            'you can restore conversation after server restart only if redis work well.\n' +
+          'you can use follow cmd to restore conversation\\.\n' +
+            'you can restore conversation after server restart only if redis work well\\.\n' +
             `Context: \`/resetContext_${this._api.getContext()}\` `,
           {parse_mode: 'MarkdownV2'}
         );
