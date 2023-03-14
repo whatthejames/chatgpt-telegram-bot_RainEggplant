@@ -154,12 +154,14 @@ export const loadFromJsonFile = async () => {
   const s = await promisify(fs.readFile)('prompts.json', 'utf-8');
   try {
     const j: RoleInfo[] = JSON.parse(s);
+    console.log(j);
     if (
       j.every((T) => {
         return T.role.length > 0 && T.shortName.length > 0;
       })
     ) {
       init(j);
+      console.log('loadFromJsonFile ok');
     }
   } catch (e) {
     console.error(e);
