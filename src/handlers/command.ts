@@ -63,6 +63,7 @@ class CommandHandler {
             '  • /roles list all roles , use this to list all available roles.\n' +
             '  • /role now role.\n' +
             '  • /role_info more now role info.\n' +
+            '  • /system_custom use [/ system_custom prompts] to set system_custom.\n' +
             `now role is ${getNowRole().role} [ /role_${
               getNowRole().shortName
             } ]\n` +
