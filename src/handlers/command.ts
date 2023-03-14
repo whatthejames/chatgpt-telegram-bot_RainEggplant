@@ -119,7 +119,7 @@ class CommandHandler {
           msg.chat.id,
           'you can use follow cmd to restore conversation.\n' +
             'you can restore conversation after server restart only if redis work well.\n' +
-            `Context:\`/resetContext_${this._api.getContext()}\``
+            `Context: /resetContext_${this._api.getContext()} `
         );
         break;
 
@@ -178,7 +178,7 @@ class CommandHandler {
             await this._bot.sendMessage(
               msg.chat.id,
               `resetContext ok,\n` +
-                `the old Context is:\`/resetContext_${old}\``
+                `the old Context is: /resetContext_${old} `
             );
           } else {
             await this._bot.sendMessage(msg.chat.id, `resetContext failed.`);
