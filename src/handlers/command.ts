@@ -80,8 +80,7 @@ class CommandHandler {
               .join('\n')}\n` +
             `now role is ${getNowRole().role} [ /role_${
               getNowRole().shortName
-            } ]`,
-          {parse_mode: 'MarkdownV2'}
+            } ]`
         );
         break;
 
