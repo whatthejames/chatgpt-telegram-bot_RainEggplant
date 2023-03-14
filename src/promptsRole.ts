@@ -155,7 +155,7 @@ export const loadFromJsonFile = async () => {
   try {
     const j: RoleInfo[] = JSON.parse(s);
     if (
-      !j.find((T) => {
+      j.every((T) => {
         return T.role.length > 0 && T.shortName.length > 0;
       })
     ) {
