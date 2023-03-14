@@ -16,7 +16,7 @@ import {createParser} from 'eventsource-parser';
 export interface PatchedChatGPTAPI {
   _buildMessages(
     text: string,
-    opts: SendMessageOptions,
+    opts: SendMessageOptions
   ): Promise<{
     messages: openai.ChatCompletionRequestMessage[];
     maxTokens: number;
@@ -49,7 +49,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
 
   RRR._buildMessages = async function _buildMessages(
     text: string,
-    opts: SendMessageOptions,
+    opts: SendMessageOptions
   ) {
     const {systemMessage = this._systemMessage} = opts;
     let {parentMessageId} = opts;
@@ -72,12 +72,12 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     const systemMessageOffset = messages.length;
     let nextMessages = text
       ? messages.concat([
-        {
-          role: 'user',
-          content: text,
-          name: opts.name,
-        },
-      ])
+          {
+            role: 'user',
+            content: text,
+            name: opts.name,
+          },
+        ])
       : messages;
     let numTokens = 0;
 
@@ -137,16 +137,15 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     // for the response.
     const maxTokens = Math.max(
       1,
-      Math.min(this._maxModelTokens - numTokens, this._maxResponseTokens),
+      Math.min(this._maxModelTokens - numTokens, this._maxResponseTokens)
     );
 
     return {messages, maxTokens, numTokens};
   };
 
-
   RRR.sendMessage = async function sendMessage(
     text: string,
-    opts: SendMessageOptions = {},
+    opts: SendMessageOptions = {}
   ): Promise<ChatMessage> {
     const {
       parentMessageId,
@@ -174,7 +173,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
 
     const {messages, maxTokens, numTokens} = await this._buildMessages(
       text,
-      opts,
+      opts
     );
 
     const result: ChatMessage = {
@@ -187,7 +186,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     const responseP = new Promise<ChatMessage>(
       // eslint-disable-next-line no-async-promise-executor
       async (resolve, reject) => {
-        const url = `${this._apiBaseUrl}/chat/completions`;
+        const url = `${this._apiBaseUrl}/v1/chat/completions`;
         const headers = {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this._apiKey}`,
@@ -243,7 +242,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
                 }
               },
             },
-            this._fetch,
+            this._fetch
           ).catch(reject);
         } else {
           try {
@@ -287,8 +286,8 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
                 new Error(
                   `OpenAI error: ${
                     res?.detail?.message || res?.detail || 'unknown'
-                  }`,
-                ),
+                  }`
+                )
               );
             }
 
@@ -299,7 +298,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
             return reject(err);
           }
         }
-      },
+      }
     ).then((message) => {
       return this._upsertMessage(message).then(() => message);
     });
@@ -322,7 +321,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     }
   };
 
-  return RRR as (ChatGPTAPI & PatchedChatGPTAPI);
+  return RRR as ChatGPTAPI & PatchedChatGPTAPI;
 };
 
 export async function* streamAsyncIterable<T>(stream: ReadableStream<T>) {
@@ -343,7 +342,7 @@ export async function* streamAsyncIterable<T>(stream: ReadableStream<T>) {
 async function fetchSSE(
   url: string,
   options: Parameters<typeof fetch>[1] & {onMessage: (data: string) => void},
-  fetch2 = fetch,
+  fetch2 = fetch
 ) {
   const {onMessage, ...fetchOptions} = options;
   const res: Response = await fetch(url, fetchOptions);

@@ -77,7 +77,7 @@ class ChatGPT {
     if (this._opts.type == 'browser') {
       const {ChatGPTAPIBrowser} = await import('chatgpt-v3');
       this._apiBrowser = new ChatGPTAPIBrowser(
-        this._opts.browser as APIBrowserOptions,
+        this._opts.browser as APIBrowserOptions
       );
       await this._apiBrowser.initSession();
       this._api = this._apiBrowser;
@@ -103,7 +103,7 @@ class ChatGPT {
     } else if (this._opts.type == 'unofficial') {
       const {ChatGPTUnofficialProxyAPI} = await import('chatgpt');
       this._apiUnofficialProxy = new ChatGPTUnofficialProxyAPI(
-        this._opts.unofficial as APIUnofficialOptions,
+        this._opts.unofficial as APIUnofficialOptions
       );
       this._api = this._apiUnofficialProxy;
       this._timeoutMs = this._opts.unofficial?.timeoutMs;
@@ -115,7 +115,7 @@ class ChatGPT {
 
   sendMessage = async (
     text: string,
-    onProgress?: (res: ChatResponseV3 | ChatResponseV4) => void,
+    onProgress?: (res: ChatResponseV3 | ChatResponseV4) => void
   ) => {
     if (!this._api) return;
 
@@ -181,7 +181,7 @@ class ChatGPT {
     return Buffer.from(
       `${this._context.conversationId || ''}:::${
         this._context.parentMessageId || ''
-      }`,
+      }`
     ).toString('base64');
   }
 
