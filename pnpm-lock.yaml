@@ -4,9 +4,10 @@ specifiers:
   '@keyv/redis': ^2.5.6
   '@types/config': ^3.3.0
   '@types/lodash': ^4.14.191
-  '@types/node': ^18.14.6
+  '@types/node': ^18.15.0
   '@types/node-telegram-bot-api': ^0.57.7
   '@types/promise-queue': ^2.2.0
+  '@types/uuid': ^9.0.1
   '@typescript-eslint/eslint-plugin': ^5.54.1
   '@typescript-eslint/parser': ^5.54.1
   chatgpt: ^5.0.8
@@ -15,6 +16,7 @@ specifiers:
   dotenv: ^16.0.3
   eslint: ^8.35.0
   eslint-config-prettier: ^8.7.0
+  eventsource-parser: ^0.0.5
   extensionless: ^1.1.1
   https-proxy-agent: ^5.0.1
   husky: ^8.0.3
@@ -23,6 +25,7 @@ specifiers:
   lodash: ^4.17.21
   node-fetch: ^3.3.0
   node-telegram-bot-api: ^0.60.0
+  p-timeout: ^6.1.1
   prettier: ^2.8.4
   promise-queue: ^2.2.5
   puppeteer: ^19.7.3
@@ -30,21 +33,25 @@ specifiers:
   telegramify-markdown: ^1.0.6
   tsc-watch: ^6.0.0
   typescript: ^4.9.5
+  uuid: ^9.0.0
 
 dependencies:
   '@keyv/redis': 2.5.6
   chatgpt: 5.0.8
   config: 3.3.9
   dotenv: 16.0.3
+  eventsource-parser: 0.0.5
   extensionless: 1.1.1
   https-proxy-agent: 5.0.1
   keyv: 4.5.2
   lodash: 4.17.21
   node-fetch: 3.3.0
   node-telegram-bot-api: 0.60.0
+  p-timeout: 6.1.1
   promise-queue: 2.2.5
   quick-lru: 6.1.1
   telegramify-markdown: 1.0.6
+  uuid: 9.0.0
 
 optionalDependencies:
   chatgpt-v3: /chatgpt/3.5.1_puppeteer@19.7.3
@@ -53,9 +60,10 @@ optionalDependencies:
 devDependencies:
   '@types/config': 3.3.0
   '@types/lodash': 4.14.191
-  '@types/node': 18.14.6
+  '@types/node': 18.15.3
   '@types/node-telegram-bot-api': 0.57.7
   '@types/promise-queue': 2.2.0
+  '@types/uuid': 9.0.1
   '@typescript-eslint/eslint-plugin': 5.54.1_mlk7dnz565t663n4razh6a6v6i
   '@typescript-eslint/parser': 5.54.1_ycpbpc6yetojsgtrx3mwntkhsu
   eslint: 8.35.0
@@ -225,12 +233,12 @@ packages:
   /@types/node-telegram-bot-api/0.57.7:
     resolution: {integrity: sha512-Hy+oFlA5RzhnK3geCazzgZgrpGiVCTgO7wJEzt6RukWovBkM0zpsUmE7yOt97QzAuJElCEldxDr42waIaxL9kQ==}
     dependencies:
-      '@types/node': 18.14.6
+      '@types/node': 18.15.3
       '@types/request': 2.48.8
     dev: true
 
-  /@types/node/18.14.6:
-    resolution: {integrity: sha512-93+VvleD3mXwlLI/xASjw0FzKcwzl3OdTCzm1LaRfqgS21gfFtK3zDXM5Op9TeeMsJVOaJ2VRDpT9q4Y3d0AvA==}
+  /@types/node/18.15.3:
+    resolution: {integrity: sha512-p6ua9zBxz5otCmbpb5D3U4B5Nanw6Pk3PPyX05xnxbB/fRv71N7CPmORg7uAD5P70T0xmx1pzAx/FUfa5X+3cw==}
 
   /@types/normalize-package-data/2.4.1:
     resolution: {integrity: sha512-Gj7cI7z+98M282Tqmp2K5EIsoouUEzbBJhQQzDE3jSIRk6r9gsz0oUokqIUR4u1R3dMHo0pDHM7sNOHyhulypw==}
@@ -244,7 +252,7 @@ packages:
     resolution: {integrity: sha512-whjk1EDJPcAR2kYHRbFl/lKeeKYTi05A15K9bnLInCVroNDCtXce57xKdI0/rQaA3K+6q0eFyUBPmqfSndUZdQ==}
     dependencies:
       '@types/caseless': 0.12.2
-      '@types/node': 18.14.6
+      '@types/node': 18.15.3
       '@types/tough-cookie': 4.0.2
       form-data: 2.5.1
     dev: true
@@ -261,11 +269,15 @@ packages:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
     dev: false
 
+  /@types/uuid/9.0.1:
+    resolution: {integrity: sha512-rFT3ak0/2trgvp4yYZo5iKFEPsET7vKydKF+VRCxlQ9bpheehyAJH89dAkaLEq/j/RZXJIqcgsmPJKUP1Z28HA==}
+    dev: true
+
   /@types/yauzl/2.10.0:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 18.14.6
+      '@types/node': 18.15.3
     dev: false
     optional: true
 
