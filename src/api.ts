@@ -15,6 +15,8 @@ import {
 } from './types';
 import {logWithTime} from './utils';
 import Keyv from 'keyv';
+import {getNowRole, getRolePrompt} from './promptsRole';
+import {ChatGPTAPIOptions, ChatMessage} from 'chatgpt';
 
 interface ChatContext {
   conversationId?: string;
@@ -63,7 +65,18 @@ class ChatGPT {
       this._apiOfficial = new ChatGPTAPI({
         ...this._opts.official,
         messageStore: keyv,
-      } as APIOfficialOptions);
+        debug: true,
+        systemMessage: getRolePrompt(getNowRole()),
+        getMessageById: async (id: string) => {
+          const m = await keyv.get(id);
+          console.log('getMessageById id:', id, m);
+          return m;
+        },
+        upsertMessage: async (message: ChatMessage) => {
+          console.log('upsertMessage message:', message);
+          await keyv.set(message.id, message);
+        },
+      } as ChatGPTAPIOptions);
       this._api = this._apiOfficial;
       this._timeoutMs = this._opts.official?.timeoutMs;
     } else if (this._opts.type == 'unofficial') {
@@ -88,16 +101,18 @@ class ChatGPT {
     let res: ChatResponseV3 | ChatResponseV4;
     if (this.apiType == 'official') {
       if (!this._apiOfficial) return;
+      (this._apiOfficial as any)._systemMessage = getRolePrompt(getNowRole());
+      // console.log(
+      //   '(this._apiOfficial as any)._systemMessage',
+      //   (this._apiOfficial as any)._systemMessage,
+      // );
       res = await this._apiOfficial.sendMessage(text, {
         ...this._context,
         onProgress,
         timeoutMs: this._timeoutMs,
-        systemMessage:
-          this._opts.official?.systemMessage &&
-          this._opts.official?.systemMessage.length > 0
-            ? this._opts.official?.systemMessage
-            : undefined,
+        systemMessage: getRolePrompt(getNowRole()),
       });
+      console.log('res', [res.role, res.detail]);
     } else {
       res = await this._api.sendMessage(text, {
         ...this._context,

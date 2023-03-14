@@ -2,6 +2,13 @@ import type TelegramBot from 'node-telegram-bot-api';
 import type {ChatGPT} from '../api';
 import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
+import {
+  getNowRole,
+  getRolePrompt,
+  roles,
+  rolesMap,
+  setNowRole,
+} from '../promptsRole';
 
 class CommandHandler {
   debug: number;
@@ -48,7 +55,48 @@ class CommandHandler {
             `(When using a command in a group, make sure to include a mention after the command, like /help@${botUsername}).\n` +
             '  • /help Show help information.\n' +
             '  • /reset Reset the current chat thread and start a new one.\n' +
-            '  • /reload (admin required) Refresh the ChatGPT session.'
+            '  • /reload (admin required) Refresh the ChatGPT session.' +
+            'System Role Config\n' +
+            '  • /roles list all roles , use this to list all available roles.\n' +
+            '  • /role now role.\n' +
+            '  • /roleInfo more now role info.\n' +
+            `now role is ${getNowRole().role} [ /role_${
+              getNowRole().shortName
+            } ]\n` +
+            ''
+        );
+        break;
+
+      case '/roles':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          'roles \n' +
+            `${roles
+              .map((T) => `${T.role} [ /role_${T.shortName} ]`)
+              .join('\n')}\n` +
+            `now role is ${getNowRole().role} [ /role_${
+              getNowRole().shortName
+            } ]`
+        );
+        break;
+
+      case '/role':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          `now role is ${getNowRole().role} [ /role_${getNowRole().shortName} ]`
+        );
+        break;
+
+      case '/roleInfo':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          `now role is ${getNowRole().role} [ /role_${getNowRole().shortName} ]`
+        );
+        await this._bot.sendMessage(
+          msg.chat.id,
+          getRolePrompt(getNowRole())
+            ? 'prompt:\n' + getRolePrompt(getNowRole())
+            : 'no prompt'
         );
         break;
 
@@ -80,6 +128,27 @@ class CommandHandler {
         break;
 
       default:
+        if (command.startsWith('/role_')) {
+          const ro = command.replace(/^\/role_/, '');
+          const rn = rolesMap.get(ro);
+          if (rn) {
+            setNowRole(rn);
+            await this._bot.sendMessage(
+              msg.chat.id,
+              `now role is ${getNowRole().role} [ /role_${
+                getNowRole().shortName
+              } ]`
+            );
+          } else {
+            await this._bot.sendMessage(
+              msg.chat.id,
+              `invalid role. now role is ${getNowRole().role} [ /role_${
+                getNowRole().shortName
+              } ]`
+            );
+          }
+          break;
+        }
         await this._bot.sendMessage(
           msg.chat.id,
           '⚠️ Unsupported command. Run /help to see the usage.'
