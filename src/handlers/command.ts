@@ -185,6 +185,7 @@ class CommandHandler {
           } else {
             await this._bot.sendMessage(msg.chat.id, `resetContext failed.`);
           }
+          break;
         }
         await this._bot.sendMessage(
           msg.chat.id,
