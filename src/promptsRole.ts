@@ -11,7 +11,7 @@ export interface RoleInfo {
   userName?: string;
 }
 
-export const roles: RoleInfo[] = [
+export let roles: RoleInfo[] = [
   {
     role: 'default',
     shortName: 'default',
@@ -91,8 +91,9 @@ export const rolesMap = new Map<string, RoleInfo>();
 
 let nowRole_: RoleInfo;
 
-const init = (roles: RoleInfo[]) => {
-  roles.forEach((T) => rolesMap.set(T.shortName, T));
+const init = (roles_: RoleInfo[]) => {
+  roles = roles_;
+  roles_.forEach((T) => rolesMap.set(T.shortName, T));
   nowRole_ = rolesMap.get('default')!;
 };
 init(roles);
