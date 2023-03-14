@@ -14,6 +14,7 @@ import {
   APIUnofficialOptions,
 } from './types';
 import {logWithTime} from './utils';
+import Keyv from 'keyv';
 
 interface ChatContext {
   conversationId?: string;
@@ -53,9 +54,16 @@ class ChatGPT {
       this._timeoutMs = this._opts.browser?.timeoutMs;
     } else if (this._opts.type == 'official') {
       const {ChatGPTAPI} = await import('chatgpt');
-      this._apiOfficial = new ChatGPTAPI(
-        this._opts.official as APIOfficialOptions
-      );
+
+      const keyv = new Keyv('redis://127.0.0.1:6379');
+      keyv.on('error', (e: any) => {
+        console.error(e);
+      });
+
+      this._apiOfficial = new ChatGPTAPI({
+        ...this._opts.official,
+        messageStore: keyv,
+      } as APIOfficialOptions);
       this._api = this._apiOfficial;
       this._timeoutMs = this._opts.official?.timeoutMs;
     } else if (this._opts.type == 'unofficial') {
