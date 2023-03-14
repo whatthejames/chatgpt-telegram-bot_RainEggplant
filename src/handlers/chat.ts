@@ -93,7 +93,8 @@ class ChatHandler {
       if (globalConfig.printSavePointEveryMessage) {
         await this._bot.sendMessage(
           chatId,
-          `SavePoint: /resetContext_${this._api.getContext()} `
+          `SavePoint: \`/resetContext_${this._api.getContext()}\` `,
+          {parse_mode: 'MarkdownV2'}
         );
       }
 

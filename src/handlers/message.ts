@@ -47,6 +47,13 @@ class MessageHandler {
         isMentioned,
         this._botUsername
       );
+    } else if (text.startsWith('/resetContext_')) {
+      await this._commandHandler.handle(
+        msg,
+        text,
+        isMentioned,
+        this._botUsername
+      );
     } else {
       // Handles:
       // - direct messages in private chats
