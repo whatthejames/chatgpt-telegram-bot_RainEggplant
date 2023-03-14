@@ -8,6 +8,7 @@ import {
   APIOfficialOptions,
   APIUnofficialOptions,
 } from './types';
+
 const {HttpsProxyAgent} = pkg;
 
 function loadConfig(): Config {
@@ -82,7 +83,7 @@ function loadConfig(): Config {
     throw new RangeError('Invalid API type');
   }
 
-  const cfg = {
+  const cfg: Config = {
     debug: tryGet<number>('debug') || 1,
     bot: {
       token: config.get<string>('bot.token'),
@@ -97,6 +98,7 @@ function loadConfig(): Config {
       unofficial: apiUnofficialCfg,
     },
     proxy: proxy,
+    redis: tryGet<string>('redis'),
   };
 
   return cfg;

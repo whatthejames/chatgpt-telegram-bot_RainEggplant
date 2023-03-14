@@ -7,7 +7,7 @@ async function main() {
   const opts = loadConfig();
 
   // Initialize ChatGPT API.
-  const api = new ChatGPT(opts.api);
+  const api = new ChatGPT(opts.api, opts.redis);
   await api.init();
 
   // Initialize Telegram Bot and message handler.

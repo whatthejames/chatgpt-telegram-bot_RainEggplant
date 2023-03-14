@@ -56,4 +56,5 @@ export interface Config {
   bot: BotOptions;
   api: APIOptions;
   proxy?: string;
+  redis?: string;
 }

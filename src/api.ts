@@ -15,8 +15,12 @@ import {
 } from './types';
 import {logWithTime} from './utils';
 import Keyv from 'keyv';
+// import KeyvRedis from '@keyv/redis';
 import {getNowRole, getRolePrompt} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import QuickLRU from 'quick-lru';
 
 interface ChatContext {
   conversationId?: string;
@@ -39,13 +43,21 @@ class ChatGPT {
   protected _timeoutMs: number | undefined;
   protected keyv: Keyv;
 
-  constructor(apiOpts: APIOptions, debug = 1) {
+  constructor(apiOpts: APIOptions, databasePath = '', debug = 1) {
     this.debug = debug;
     this.apiType = apiOpts.type;
     this._opts = apiOpts;
     this._timeoutMs = undefined;
 
-    this.keyv = new Keyv('redis://127.0.0.1:6379');
+    if (databasePath.length > 0) {
+      this.keyv = new Keyv(databasePath);
+    } else {
+      // same as npm chatgpt package
+      this.keyv = new Keyv({
+        store: new QuickLRU({maxSize: 1e4}),
+      });
+    }
+    // (this.keyv.opts.store as KeyvRedis)?.redis;
     this.keyv.on('error', (e: any) => {
       console.error(e);
     });
@@ -110,7 +122,9 @@ class ChatGPT {
     let res: ChatResponseV3 | ChatResponseV4;
     if (this.apiType == 'official') {
       if (!this._apiOfficial) return;
-      (this._apiOfficial as any)._systemMessage = getRolePrompt(getNowRole());
+      if (getRolePrompt(getNowRole())) {
+        (this._apiOfficial as any)._systemMessage = getRolePrompt(getNowRole());
+      }
       // console.log(
       //   '(this._apiOfficial as any)._systemMessage',
       //   (this._apiOfficial as any)._systemMessage,
