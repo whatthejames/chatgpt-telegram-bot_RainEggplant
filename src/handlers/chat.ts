@@ -8,6 +8,7 @@ import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
 import Queue from 'promise-queue';
 import {globalConfig} from '../GlobalConfig';
+import {SendMessageReturn} from '../PatchChatGPTAPI';
 
 class ChatHandler {
   debug: number;
@@ -90,6 +91,12 @@ class ChatHandler {
         )
       );
 
+      if ((res as SendMessageReturn).numTokens) {
+        await this._bot.sendMessage(
+          chatId,
+          `numTokens : ${(res as SendMessageReturn).numTokens} `
+        );
+      }
       if (globalConfig.printSavePointEveryMessage) {
         await this._bot.sendMessage(
           chatId,

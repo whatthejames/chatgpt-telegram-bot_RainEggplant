@@ -13,6 +13,8 @@ import pTimeout from 'p-timeout';
 import {v4 as uuidv4} from 'uuid';
 import {createParser} from 'eventsource-parser';
 
+export type SendMessageReturn = ChatMessage & {numTokens: number};
+
 export interface PatchedChatGPTAPI {
   _buildMessages(
     text: string,
@@ -23,7 +25,10 @@ export interface PatchedChatGPTAPI {
     numTokens: number;
   }>;
 
-  sendMessage(text: string, opts?: SendMessageOptions): Promise<ChatMessage>;
+  sendMessage(
+    text: string,
+    opts?: SendMessageOptions
+  ): Promise<SendMessageReturn>;
 
   _getTokenCount(text: string): Promise<number>;
 
@@ -147,7 +152,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
   RRR.sendMessage = async function sendMessage(
     text: string,
     opts: SendMessageOptions = {}
-  ): Promise<ChatMessage> {
+  ): Promise<SendMessageReturn> {
     const {
       parentMessageId,
       messageId = uuidv4(),
@@ -177,14 +182,17 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
       opts
     );
 
-    const result: ChatMessage = {
+    console.log('numTokens', numTokens);
+
+    const result: SendMessageReturn = {
       role: 'assistant',
       id: uuidv4(),
       parentMessageId: messageId,
       text: '',
+      numTokens: numTokens,
     };
 
-    const responseP = new Promise<ChatMessage>(
+    const responseP = new Promise<SendMessageReturn>(
       // eslint-disable-next-line no-async-promise-executor
       async (resolve, reject) => {
         const url = `${this._apiBaseUrl}/v1/chat/completions`;

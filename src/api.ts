@@ -19,7 +19,7 @@ import Keyv, {Store} from 'keyv';
 import {getNowRole, getRolePrompt, loadCustomFromStorage} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import QuickLRU from 'quick-lru';
-import {toPatchChatGPTAPI} from './PatchChatGPTAPI';
+import {SendMessageReturn, toPatchChatGPTAPI} from './PatchChatGPTAPI';
 
 interface ChatContext {
   conversationId?: string;
@@ -107,10 +107,10 @@ class ChatGPT {
   sendMessage = async (
     text: string,
     onProgress?: (res: ChatResponseV3 | ChatResponseV4) => void
-  ) => {
+  ): Promise<ChatResponseV3 | SendMessageReturn | undefined> => {
     if (!this._api) return;
 
-    let res: ChatResponseV3 | ChatResponseV4;
+    let res: ChatResponseV3 | SendMessageReturn;
     if (this.apiType == 'official') {
       if (!this._apiOfficial) return;
       if (getRolePrompt(getNowRole())) {
@@ -120,12 +120,12 @@ class ChatGPT {
       //   '(this._apiOfficial as any)._systemMessage',
       //   (this._apiOfficial as any)._systemMessage,
       // );
-      res = await this._apiOfficial.sendMessage(text, {
+      res = (await this._apiOfficial.sendMessage(text, {
         ...this._context,
         onProgress,
         timeoutMs: this._timeoutMs,
         systemMessage: getRolePrompt(getNowRole()),
-      });
+      })) as SendMessageReturn;
       console.log('res', [
         res.role,
         res.name,
@@ -135,11 +135,11 @@ class ChatGPT {
         res.detail,
       ]);
     } else {
-      res = await this._api.sendMessage(text, {
+      res = (await this._api.sendMessage(text, {
         ...this._context,
         onProgress,
         timeoutMs: this._timeoutMs,
-      });
+      })) as ChatResponseV3;
     }
 
     const parentMessageId =
