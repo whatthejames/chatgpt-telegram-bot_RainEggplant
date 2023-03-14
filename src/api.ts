@@ -183,7 +183,7 @@ class ChatGPT {
         return false;
       }
       const m = await this.getMessageById(parentMessageId);
-      if (m) {
+      if (!m) {
         return false;
       }
       this._context = {
