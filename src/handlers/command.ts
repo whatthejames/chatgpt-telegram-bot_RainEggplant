@@ -63,7 +63,8 @@ class CommandHandler {
             '  • /roles list all roles , use this to list all available roles.\n' +
             '  • /role now role.\n' +
             '  • /role_info more now role info.\n' +
-            '  • /system_custom use [/ system_custom prompts] to set system_custom.\n' +
+            '  • /system_custom use [/system_custom prompts] to set custom prompts.\n' +
+            '  • /system_custom_clear clear custom prompts\n' +
             `now role is ${getNowRole().role} [ /role_${
               getNowRole().shortName
             } ]\n` +
@@ -144,9 +145,18 @@ class CommandHandler {
               text = msg.text?.slice(entity.length).trim() ?? '';
             }
           }
-          await setCustom(text, this._api.keyv);
-          await this._bot.sendMessage(msg.chat.id, `ok`);
+          if (text && text.length > 0) {
+            await setCustom(text, this._api.keyv);
+            await this._bot.sendMessage(msg.chat.id, `ok`);
+          } else {
+            await this._bot.sendMessage(msg.chat.id, `failed`);
+          }
         }
+        break;
+
+      case '/system_custom_clear':
+        await setCustom('', this._api.keyv);
+        await this._bot.sendMessage(msg.chat.id, `ok`);
         break;
 
       case '/reload':
