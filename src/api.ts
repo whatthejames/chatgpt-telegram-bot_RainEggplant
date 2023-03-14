@@ -92,6 +92,11 @@ class ChatGPT {
         ...this._context,
         onProgress,
         timeoutMs: this._timeoutMs,
+        systemMessage:
+          this._opts.official?.systemMessage &&
+          this._opts.official?.systemMessage.length > 0
+            ? this._opts.official?.systemMessage
+            : undefined,
       });
     } else {
       res = await this._api.sendMessage(text, {
