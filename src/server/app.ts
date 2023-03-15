@@ -48,7 +48,7 @@ export class ServerApp {
       return res.send('undefined');
     });
     this.router.get(/^\/json\/resetContext_/, async (req, res) => {
-      const savePoint = req.path.replace(/^\/resetContext_/, '');
+      const savePoint = req.path.replace(/^\/json\/resetContext_/, '');
       const oldPoint = await chatGPT.getContext();
       try {
         if (await chatGPT.resetContext(savePoint)) {
