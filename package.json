@@ -13,6 +13,7 @@
     "lint:fix": "eslint --fix src/**/*.{js,ts}",
     "format": "prettier --check src/**/*.{js,ts}",
     "format:fix": "prettier --write src/**/*.{js,ts}",
+    "format:fix:tool": "prettier --write tool/**/*.{js,ts}",
     "typecheck": "tsc --noEmit --noUnusedLocals",
     "prepare": "husky install"
   },
