@@ -20,7 +20,9 @@ import {
   getNowRole,
   getRolePrompt,
   loadCustomFromStorage,
+  loadCustomPoint,
   rolesMap,
+  saveCustomPoint,
   setNowRole,
 } from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
@@ -196,11 +198,15 @@ class ChatGPT {
     }
   };
 
-  getContext() {
+  async getContext() {
+    let roleCustomSavePoint = '';
+    if (getNowRole().shortName === 'custom') {
+      roleCustomSavePoint = (await saveCustomPoint(this.keyv)) || '';
+    }
     return Buffer.from(
       `${this._context.conversationId || ''}:::${
         this._context.parentMessageId || ''
-      }:::${getNowRole().shortName || ''}`
+      }:::${getNowRole().shortName || ''}:::${roleCustomSavePoint}`
     ).toString('base64');
   }
 
@@ -214,6 +220,8 @@ class ChatGPT {
       const parentMessageId = cc[1] && cc[1].length > 0 ? cc[1] : undefined;
       const roleShortName =
         cc.length >= 3 && cc[2] && cc[2].length > 0 ? cc[2] : undefined;
+      const roleCustomSavePoint =
+        cc.length >= 4 && cc[3] && cc[3].length > 0 ? cc[3] : undefined;
       if (!parentMessageId) {
         return false;
       }
@@ -230,6 +238,13 @@ class ChatGPT {
         if (n) {
           setNowRole(n);
         }
+      }
+      if (
+        roleShortName === 'custom' &&
+        roleCustomSavePoint &&
+        roleCustomSavePoint.length > 0
+      ) {
+        await loadCustomPoint(this.keyv, roleCustomSavePoint);
       }
       return true;
     } catch (e) {

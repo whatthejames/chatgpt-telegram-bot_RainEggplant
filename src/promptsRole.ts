@@ -131,7 +131,7 @@ export const setCustom = async (prompt: string, storage: Keyv) => {
   }
 };
 export const loadCustomFromStorage = async (storage: Keyv) => {
-  const r = await storage.get('CustomRole');
+  const r = await storage.get('CustomRole:Now');
   if (r) {
     try {
       const c = r as RoleInfo;
@@ -152,7 +152,35 @@ export const loadCustomFromStorage = async (storage: Keyv) => {
 export const saveCustomFrom = async (storage: Keyv) => {
   const n = rolesMap.get('custom');
   if (n) {
-    await storage.set('CustomRole', n);
+    await storage.set('CustomRole:Now', n);
+  }
+};
+export const saveCustomPoint = async (storage: Keyv) => {
+  const n = rolesMap.get('custom');
+  if (n) {
+    const p = moment().format('YYYYMMDD_HHmmSS');
+    await storage.set(`CustomRole:SavePoint:${p}`, n);
+    return p;
+  }
+  return undefined;
+};
+export const loadCustomPoint = async (storage: Keyv, p: string) => {
+  const r = await storage.get(`CustomRole:SavePoint:${p}`);
+  if (r) {
+    try {
+      const c = r as RoleInfo;
+      if (c.role && c.shortName && c.shortName === 'custom') {
+        const n = rolesMap.get('custom');
+        if (n) {
+          n.prompt = c.prompt;
+          n.userName = c.userName;
+          n.shortName = c.shortName;
+          n.role = c.role;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 

@@ -146,7 +146,7 @@ class CommandHandler {
           msg.chat.id,
           'you can use follow cmd to restore conversation\\.\n' +
             'you can restore conversation after server restart only if redis work well\\.\n' +
-            `Context: \`/resetContext_${this._api.getContext()}\` `,
+            `Context: \`/resetContext_${await this._api.getContext()}\` `,
           {parse_mode: 'MarkdownV2'}
         );
         break;
@@ -268,7 +268,7 @@ class CommandHandler {
           break;
         }
         if (command.startsWith('/resetContext_')) {
-          const old = this._api.getContext();
+          const old = await this._api.getContext();
           const cc = command.replace(/^\/resetContext_/, '');
           if (await this._api.resetContext(cc)) {
             await this._bot.sendMessage(
