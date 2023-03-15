@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import express from 'express';
-import json5 from 'json5';
 import Router from 'express-promise-router';
+import json5 from 'json5';
 
 import Keyv, {Store} from 'keyv';
 import {ChatGPT} from '../api';
@@ -46,6 +46,10 @@ export class ServerApp {
   ) {
     this.app.use(this.router);
 
+    // https://stackoverflow.com/questions/24330014/bodyparser-is-deprecated-express-4
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({extended: true}));
+
     this.router.get('/', async (req, res) => {
       res.send('Test');
     });
@@ -75,6 +79,7 @@ export class ServerApp {
     });
     this.router.get('/searchText', async (req, res) => {
       const s = req.param('s');
+      console.log('/searchText: ', s);
       if (!s) {
         return res.send('undefined');
       }
