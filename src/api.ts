@@ -26,7 +26,6 @@ import {
   setNowRole,
 } from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
-import QuickLRU from 'quick-lru';
 import {
   PatchedChatGPTAPI,
   SendMessageReturn,
@@ -36,6 +35,11 @@ import {
 interface ChatContext {
   conversationId?: string;
   parentMessageId?: string;
+}
+
+interface ChatGPTSendMessageReturnType {
+  res: ChatResponseV3 | SendMessageReturn;
+  context: ChatContext;
 }
 
 class ChatGPT {
@@ -137,7 +141,7 @@ class ChatGPT {
   sendMessage = async (
     text: string,
     onProgress?: (res: ChatResponseV3 | ChatResponseV4) => void
-  ): Promise<ChatResponseV3 | SendMessageReturn | undefined> => {
+  ): Promise<ChatGPTSendMessageReturnType | undefined> => {
     if (!this._api) return;
 
     let res: ChatResponseV3 | SendMessageReturn;
@@ -192,7 +196,7 @@ Current date: ${currentDate}`;
       parentMessageId: parentMessageId,
     };
 
-    return res;
+    return {res: res, context: this._context} as ChatGPTSendMessageReturnType;
   };
 
   resetThread = async () => {
@@ -256,10 +260,10 @@ Current date: ${currentDate}`;
       ) {
         await loadCustomPoint(this.keyv, roleCustomSavePoint);
       }
-      return true;
+      return this._context;
     } catch (e) {
       console.error(e);
-      return false;
+      return undefined;
     }
   }
 }

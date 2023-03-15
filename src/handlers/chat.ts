@@ -101,13 +101,14 @@ class ChatHandler {
       );
 
       if (
-        (res as SendMessageReturn).numTokens &&
-        (res as SendMessageReturn).maxTokens
+        res &&
+        (res.res as SendMessageReturn).numTokens &&
+        (res.res as SendMessageReturn).maxTokens
       ) {
         await this._bot.sendMessage(
           chatId,
-          `numTokens : ${(res as SendMessageReturn).numTokens} , ` +
-            `maxTokens : ${(res as SendMessageReturn).maxTokens} `
+          `numTokens : ${(res.res as SendMessageReturn).numTokens} , ` +
+            `maxTokens : ${(res.res as SendMessageReturn).maxTokens} `
         );
       }
       if (globalConfig.printSavePointEveryMessage) {
@@ -120,8 +121,8 @@ class ChatHandler {
 
       const resText =
         this._api.apiType == 'browser'
-          ? (res as ChatResponseV3).response
-          : (res as ChatResponseV4).text;
+          ? (res?.res as ChatResponseV3).response
+          : (res?.res as ChatResponseV4).text;
       await this._editMessage(reply, resText);
 
       if (this.debug >= 1) logWithTime(`📨 Response:\n${resText}`);
