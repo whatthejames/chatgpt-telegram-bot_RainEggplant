@@ -69,8 +69,8 @@ class CommandHandler {
             `(When using a command in a group, make sure to include a mention after the command, like /help@${botUsername}).\n` +
             '  • /help Show help information.\n' +
             '  • /reset Reset the current chat thread and start a new one.\n' +
-            '  • /reload (admin required) Refresh the ChatGPT session.' +
-            '  • /hot_load_prompt_json  hot load prompt.json file.' +
+            '  • /reload (admin required) Refresh the ChatGPT session.\n' +
+            '  • /hot_load_prompt_json  hot load prompt.json file.\n' +
             'System Role Config\n' +
             '  • /roles list all roles , use this to list all available roles.\n' +
             '  • /role now role.\n' +
