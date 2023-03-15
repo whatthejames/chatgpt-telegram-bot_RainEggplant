@@ -27,7 +27,7 @@ export class ServerApp {
         const format = (m: ChatMessage[]) => {
           return m
             .map((T) => {
-              return `${T.id} : ${T.role} \n${T.name}`;
+              return `${T.id} : ${T.role} \n${T.text}`;
             })
             .join('\n\n\n');
         };
