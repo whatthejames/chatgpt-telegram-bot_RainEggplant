@@ -60,7 +60,14 @@ async function main() {
 
   bot.on('message', messageHandler.handle);
 
-  const serverApp = new ServerApp(keyv, api);
+  if (opts.server.port) {
+    const serverApp = new ServerApp(
+      keyv,
+      api,
+      opts.server.host,
+      opts.server.port
+    );
+  }
 }
 
 main().catch((err) => {
