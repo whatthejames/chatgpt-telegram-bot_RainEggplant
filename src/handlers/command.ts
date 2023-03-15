@@ -12,7 +12,7 @@ import {
   setNowRole,
 } from '../promptsRole';
 import {globalConfig} from '../GlobalConfig';
-import {parseInt, isSafeInteger} from 'lodash';
+import lodash from 'lodash';
 import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
 
 class CommandHandler {
@@ -172,7 +172,7 @@ class CommandHandler {
         {
           if (text && text.length > 0) {
             const n = parseInt(text);
-            if (isSafeInteger(n)) {
+            if (lodash.isSafeInteger(n)) {
               await this._api.setMaxResponseTokens(n);
               await this._bot.sendMessage(
                 msg.chat.id,
@@ -196,7 +196,7 @@ class CommandHandler {
         {
           if (text && text.length > 0) {
             const n = parseInt(text);
-            if (isSafeInteger(n)) {
+            if (lodash.isSafeInteger(n)) {
               await this._api.setMaxModelTokens(n);
               await this._bot.sendMessage(
                 msg.chat.id,
