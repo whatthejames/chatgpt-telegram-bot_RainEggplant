@@ -46,6 +46,24 @@ export class ServerApp {
       }
       res.send('undefined');
     });
+    this.router.get(/^\/json\/resetContext_/, async (req, res) => {
+      const savePoint = req.path.replace(/^\/resetContext_/, '');
+      const oldPoint = await chatGPT.getContext();
+      try {
+        if (await chatGPT.resetContext(savePoint)) {
+          const mm = await chatGPT.exportMessageList();
+          if (mm && mm.length > 0) {
+            res.send(JSON.stringify(mm));
+          }
+        }
+      } catch (e: any) {
+        console.error(e);
+        res.send(e.message);
+      } finally {
+        await chatGPT.resetContext(oldPoint);
+      }
+      res.send('undefined');
+    });
 
     this.app.listen(port, host);
   }
