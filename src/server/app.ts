@@ -57,7 +57,21 @@ export class ServerApp {
       const savePoint = req.path.replace(/^\/html\/resetContext_/, '');
       const m = await this.getMessageList(savePoint);
       if (_.isArray(m)) {
-        return res.send(`<pre>${this.format(m)}\n</pre>`);
+        return res.send(
+          `<!DOCTYPE html>
+<html lang='zh-CN'>
+<head>
+  <meta charset='UTF-8'>
+</head>
+<body style='width: 100%;'>
+  <div style='width: 100%;'>
+  <br>
+  ${this.format(m).replace(/\n/g, '<br>')}
+  <br>
+  </div>
+</body>
+</html>`
+        );
       }
       return res.send(m);
     });
