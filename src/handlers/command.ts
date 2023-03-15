@@ -1,4 +1,4 @@
-import type TelegramBot from 'node-telegram-bot-api';
+﻿import type TelegramBot from 'node-telegram-bot-api';
 import type {ChatGPT} from '../api';
 import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
@@ -77,26 +77,31 @@ class CommandHandler {
             'Command list:\n' +
             `(When using a command in a group, make sure to include a mention after the command, like /help@${botUsername}).\n` +
             '  • /help Show help information.\n' +
-            '  • /reset Reset the current chat thread and start a new one.\n' +
+            '  • /reset 重置到全新的聊天上下文.\n' +
             '  • /reload (admin required) Refresh the ChatGPT session.\n' +
-            '  • /hot_load_prompt_json  hot load prompt.json file.\n' +
-            'System Role Config\n' +
-            '  • /roles list all roles , use this to list all available roles.\n' +
-            '  • /role now role.\n' +
-            '  • /role_info more now role info.\n' +
-            '  • /system_custom use [/system_custom prompts] to set custom prompts.\n' +
-            '  • /system_custom_clear clear custom prompts\n' +
-            `now role is ${getNowRole().role} [ /role_${
+            '  • /hot_load_prompt_json  热加载prompt.json引导词文件，修改引导词文件文件后不需要重启整个服务啦.\n' +
+            '系统角色配置（SystemMessage引导词）\n' +
+            '  • /roles 列出所有角色 , 用这个指令列出所有可用的角色.\n' +
+            '  • /role 显示当前的角色.\n' +
+            '  • /role_info 当前角色的prompt引导词.\n' +
+            '  • /system_custom 使用 [/system_custom 引导词] 来设置自定义(custom)角色的引导词，在切换到custom角色时使用该引导词.\n' +
+            '  • /system_custom_clear 清空custom引导词\n' +
+            `当前使用的角色是： ${getNowRole().role} [ /role_${
               getNowRole().shortName
             } ]\n` +
-            'Conversation Context\n' +
-            '  • /get_context get a save point for Context.\n' +
-            '  • /print_save_point print Save Point Every Message.\n' +
-            'Max Tokens\n' +
-            '  • /get_max_response_tokens get max response tokens.\n' +
-            '  • /set_max_response_tokens set max response tokens.\n' +
-            '  • /get_max_model_tokens get max model tokens.\n' +
-            '  • /set_max_model_tokens set max model tokens.\n' +
+            '对话上下文\n' +
+            '  • /get_context 获取当前聊天上下文的的存档点.\n' +
+            '  • /print_save_point [开关]在每一条消息后显示存档点.\n' +
+            '  •  •  • 可以通过直接发送存档点命令来回到指定的对话状态。\n' +
+            '  •  •  • 默认存档的上下文信息保存在内存中，重启服务后失效。\n' +
+            '  •  •  • 若redis数据库工作正常时存档的上下文信息会保存到redis数据库，服务重启后仍然可以使用保存的存档点。\n' +
+            '最大 Tokens 设置\n' +
+            '  • /get_max_response_tokens 显示最大回答 tokens.\n' +
+            '  • /set_max_response_tokens 设置最大回答 tokens.\n' +
+            '  • /get_max_model_tokens 显示最大模型 tokens.\n' +
+            '  • /set_max_model_tokens 设置最大模型 tokens.\n' +
+            '  •  •  • 在提示剩余token不足以生成回答时可以调小max_response_tokens并再次重新发送提问来避开限制\n' +
+            '  •  •  • 调整max_response_tokens的大小也会影响回答的结果，越小越倾向于更简单的思考；越大越倾向于更加复杂的思考。调小可以避免过拟合，调大可以避免\n' +
             ''
         );
         break;
