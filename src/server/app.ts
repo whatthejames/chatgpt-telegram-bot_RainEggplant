@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import express from 'express';
+import json5 from 'json5';
 import Router from 'express-promise-router';
 
 import Keyv, {Store} from 'keyv';
@@ -71,6 +72,24 @@ export class ServerApp {
         return res.json(m);
       }
       return res.send(m);
+    });
+    this.router.get('/searchText', async (req, res) => {
+      const s = req.param('s');
+      if (!s) {
+        return res.send('undefined');
+      }
+      const result: {id: string; text: string}[] = [];
+      for await (const d of this.keyv.iterator()) {
+        if (d && d.text && _.isString(d.text) && d.id && _.isString(d.id)) {
+          if ((d.text as string).search(s) !== -1) {
+            result.push({
+              id: d.id,
+              text: d.text,
+            });
+          }
+        }
+      }
+      return res.send(json5.stringify(result, undefined, 2));
     });
 
     this.app.listen(port, host);
