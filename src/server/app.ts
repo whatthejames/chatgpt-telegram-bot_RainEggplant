@@ -35,15 +35,16 @@ export class ServerApp {
           const mm = await chatGPT.exportMessageList();
           if (mm && mm.length > 0) {
             const out = format(mm);
+            await chatGPT.resetContext(oldPoint);
             return res.send(out);
           }
         }
       } catch (e: any) {
         console.error(e);
-        return res.send(e.message);
-      } finally {
         await chatGPT.resetContext(oldPoint);
+        return res.send(e.message);
       }
+      await chatGPT.resetContext(oldPoint);
       return res.send('undefined');
     });
     this.router.get(/^\/json\/resetContext_/, async (req, res) => {
@@ -53,15 +54,16 @@ export class ServerApp {
         if (await chatGPT.resetContext(savePoint)) {
           const mm = await chatGPT.exportMessageList();
           if (mm && mm.length > 0) {
+            await chatGPT.resetContext(oldPoint);
             return res.send(JSON.stringify(mm));
           }
         }
       } catch (e: any) {
         console.error(e);
-        return res.send(e.message);
-      } finally {
         await chatGPT.resetContext(oldPoint);
+        return res.send(e.message);
       }
+      await chatGPT.resetContext(oldPoint);
       return res.send('undefined');
     });
 
