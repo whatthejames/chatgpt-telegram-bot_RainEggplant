@@ -19,7 +19,11 @@ import Keyv, {Store} from 'keyv';
 import {getNowRole, getRolePrompt, loadCustomFromStorage} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import QuickLRU from 'quick-lru';
-import {SendMessageReturn, toPatchChatGPTAPI} from './PatchChatGPTAPI';
+import {
+  PatchedChatGPTAPI,
+  SendMessageReturn,
+  toPatchChatGPTAPI,
+} from './PatchChatGPTAPI';
 
 interface ChatContext {
   conversationId?: string;
@@ -36,7 +40,7 @@ class ChatGPT {
     | ChatGPTUnofficialProxyAPI
     | undefined;
   protected _apiBrowser: ChatGPTAPIBrowser | undefined;
-  protected _apiOfficial: ChatGPTAPI | undefined;
+  protected _apiOfficial: (ChatGPTAPI & PatchedChatGPTAPI) | undefined;
   protected _apiUnofficialProxy: ChatGPTUnofficialProxyAPI | undefined;
   protected _context: ChatContext = {};
   protected _timeoutMs: number | undefined;
@@ -62,6 +66,22 @@ class ChatGPT {
     await this.keyv.set(message.id, message);
   };
 
+  setMaxResponseTokens = (t: number) => {
+    this._apiOfficial?.setMaxResponseTokens(t);
+  };
+
+  getMaxResponseTokens = (): number => {
+    return this._apiOfficial?.getMaxResponseTokens() || 0;
+  };
+
+  setMaxModelTokens = (t: number) => {
+    this._apiOfficial?.setMaxModelTokens(t);
+  };
+
+  getMaxModelTokens = (): number => {
+    return this._apiOfficial?.getMaxModelTokens() || 0;
+  };
+
   init = async () => {
     await loadCustomFromStorage(this.keyv);
 
@@ -76,19 +96,21 @@ class ChatGPT {
     } else if (this._opts.type == 'official') {
       const {ChatGPTAPI} = await import('chatgpt');
 
-      this._apiOfficial = new ChatGPTAPI({
-        ...this._opts.official,
-        messageStore: this.keyv,
-        debug: true,
-        systemMessage: getRolePrompt(getNowRole()),
-        getMessageById: async (id: string) => {
-          return this.getMessageById(id);
-        },
-        upsertMessage: async (message: ChatResponseV4) => {
-          await this.upsertMessage(message);
-        },
-      } as ChatGPTAPIOptions);
-      this._apiOfficial = toPatchChatGPTAPI(this._apiOfficial);
+      this._apiOfficial = toPatchChatGPTAPI(
+        new ChatGPTAPI({
+          ...this._opts.official,
+          messageStore: this.keyv,
+          debug: true,
+          systemMessage: getRolePrompt(getNowRole()),
+          getMessageById: async (id: string) => {
+            return this.getMessageById(id);
+          },
+          upsertMessage: async (message: ChatResponseV4) => {
+            await this.upsertMessage(message);
+          },
+        } as ChatGPTAPIOptions)
+      );
+
       this._api = this._apiOfficial;
       this._timeoutMs = this._opts.official?.timeoutMs;
     } else if (this._opts.type == 'unofficial') {

@@ -12,6 +12,8 @@ import {
   setNowRole,
 } from '../promptsRole';
 import {globalConfig} from '../GlobalConfig';
+import {parseInt, isSafeInteger} from 'lodash';
+import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
 
 class CommandHandler {
   debug: number;
@@ -45,6 +47,13 @@ class CommandHandler {
 
     // Ignore commands without mention in groups.
     if (msg.chat.type != 'private' && !isMentioned) return;
+
+    let text = msg.text ?? '';
+    for (const entity of msg.entities ?? []) {
+      if (entity.type == 'bot_command' && entity.offset == 0) {
+        text = msg.text?.slice(entity.length).trim() ?? '';
+      }
+    }
 
     switch (command) {
       case '/help':
@@ -143,18 +152,60 @@ class CommandHandler {
 
       case '/system_custom':
         {
-          let text = msg.text ?? '';
-          for (const entity of msg.entities ?? []) {
-            if (entity.type == 'bot_command' && entity.offset == 0) {
-              text = msg.text?.slice(entity.length).trim() ?? '';
-            }
-          }
           if (text && text.length > 0) {
             await setCustom(text, this._api.keyv);
             await this._bot.sendMessage(msg.chat.id, `ok`);
           } else {
             await this._bot.sendMessage(msg.chat.id, `failed`);
           }
+        }
+        break;
+
+      case '/get_max_response_tokens':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          `now MaxResponseTokens is ${this._api.getMaxResponseTokens()}`
+        );
+        break;
+
+      case '/set_max_response_tokens':
+        {
+          if (text && text.length > 0) {
+            const n = parseInt(text);
+            if (isSafeInteger(n)) {
+              await this._api.setMaxResponseTokens(n);
+              await this._bot.sendMessage(
+                msg.chat.id,
+                `ok. now MaxResponseTokens is ${this._api.getMaxResponseTokens()}`
+              );
+              break;
+            }
+          }
+          await this._bot.sendMessage(msg.chat.id, `failed`);
+        }
+        break;
+
+      case '/get_max_model_tokens':
+        await this._bot.sendMessage(
+          msg.chat.id,
+          `now MaxModelTokens is ${this._api.getMaxModelTokens()}`
+        );
+        break;
+
+      case '/set_max_model_tokens':
+        {
+          if (text && text.length > 0) {
+            const n = parseInt(text);
+            if (isSafeInteger(n)) {
+              await this._api.setMaxModelTokens(n);
+              await this._bot.sendMessage(
+                msg.chat.id,
+                `ok. now MaxModelTokens is ${this._api.getMaxModelTokens()}`
+              );
+              break;
+            }
+          }
+          await this._bot.sendMessage(msg.chat.id, `failed`);
         }
         break;
 

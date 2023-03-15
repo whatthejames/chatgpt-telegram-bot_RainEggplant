@@ -45,6 +45,14 @@ export interface PatchedChatGPTAPI {
   _getMessageById: GetMessageByIdFunction;
   _upsertMessage: UpsertMessageFunction;
   _completionParams: Omit<openai.CreateChatCompletionRequest, 'messages' | 'n'>;
+
+  setMaxResponseTokens(t: number): void;
+
+  getMaxResponseTokens(): number;
+
+  setMaxModelTokens(t: number): void;
+
+  getMaxModelTokens(): number;
 }
 
 const CHATGPT_MODEL = 'gpt-3.5-turbo';
@@ -54,6 +62,19 @@ const ASSISTANT_LABEL_DEFAULT = 'ChatGPT';
 export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
   const RRR = api as unknown as PatchedChatGPTAPI &
     Pick<ChatGPTAPI, 'sendMessage' | 'apiKey'>;
+
+  RRR.setMaxModelTokens = function setMaxModelTokens(t: number) {
+    this._maxModelTokens = t;
+  };
+  RRR.getMaxModelTokens = function getMaxModelTokens() {
+    return this._maxModelTokens;
+  };
+  RRR.setMaxResponseTokens = function setMaxResponseTokens(t: number) {
+    this._maxResponseTokens = t;
+  };
+  RRR.getMaxResponseTokens = function getMaxResponseTokens() {
+    return this._maxResponseTokens;
+  };
 
   RRR._buildMessages = async function _buildMessages(
     text: string,
