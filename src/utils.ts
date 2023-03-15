@@ -97,6 +97,10 @@ function loadConfig(): Config {
       official: apiOfficialCfg,
       unofficial: apiUnofficialCfg,
     },
+    server: {
+      host: tryGet<string>('server.host'),
+      port: tryGet<number>('server.port'),
+    },
     proxy: proxy,
     redis: tryGet<string>('redis'),
   };

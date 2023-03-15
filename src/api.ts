@@ -228,7 +228,7 @@ Current date: ${currentDate}`;
     try {
       const cc = Buffer.from(c, 'base64').toString('utf-8').split(':::');
       if (cc && cc.length < 2) {
-        return false;
+        return undefined;
       }
       const conversationId = cc[0] && cc[0].length > 0 ? cc[0] : undefined;
       const parentMessageId = cc[1] && cc[1].length > 0 ? cc[1] : undefined;
@@ -237,11 +237,11 @@ Current date: ${currentDate}`;
       const roleCustomSavePoint =
         cc.length >= 4 && cc[3] && cc[3].length > 0 ? cc[3] : undefined;
       if (!parentMessageId) {
-        return false;
+        return undefined;
       }
       const m = await this.getMessageById(parentMessageId);
       if (!m) {
-        return false;
+        return undefined;
       }
       this._context = {
         conversationId,
@@ -265,6 +265,15 @@ Current date: ${currentDate}`;
       console.error(e);
       return undefined;
     }
+  }
+
+  async exportMessageList() {
+    if (this._context.parentMessageId) {
+      return this._apiOfficial?.exportMessageList(
+        this._context.parentMessageId
+      );
+    }
+    return undefined;
   }
 }
 

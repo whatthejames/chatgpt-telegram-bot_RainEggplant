@@ -6,6 +6,7 @@ import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';
 import {globalConfig} from './GlobalConfig';
 import {loadFromJsonFile} from './promptsRole';
+import {ServerApp} from './server/app';
 
 let keyv: Keyv;
 
@@ -58,6 +59,8 @@ async function main() {
   await messageHandler.init();
 
   bot.on('message', messageHandler.handle);
+
+  const serverApp = new ServerApp(keyv, api);
 }
 
 main().catch((err) => {

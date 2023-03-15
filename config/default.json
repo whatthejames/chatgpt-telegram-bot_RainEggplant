@@ -38,6 +38,10 @@
       "timeoutMs": 120000 // set to 0 to disable
     }
   },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3033
+  },
   "proxy": "", // You can also specify the proxy using the environment variable "HTTP_PROXY"
   "redis": ""  // it can be "redis://127.0.0.1:6379"
 }

@@ -51,10 +51,16 @@ export interface APIOptions {
   unofficial?: APIUnofficialOptions;
 }
 
+export interface ServerAppConfig {
+  host?: string;
+  port?: number;
+}
+
 export interface Config {
   debug: number;
   bot: BotOptions;
   api: APIOptions;
+  server: ServerAppConfig;
   proxy?: string;
   redis?: string;
 }

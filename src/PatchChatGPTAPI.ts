@@ -53,11 +53,16 @@ export interface PatchedChatGPTAPI {
   setMaxModelTokens(t: number): void;
 
   getMaxModelTokens(): number;
+
+  exportMessageList(
+    parentMessageId: string,
+    systemMessage?: string
+  ): Promise<ChatMessage[]>;
 }
 
-const CHATGPT_MODEL = 'gpt-3.5-turbo';
-const USER_LABEL_DEFAULT = 'User';
-const ASSISTANT_LABEL_DEFAULT = 'ChatGPT';
+export const CHATGPT_MODEL = 'gpt-3.5-turbo';
+export const USER_LABEL_DEFAULT = 'User';
+export const ASSISTANT_LABEL_DEFAULT = 'ChatGPT';
 
 export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
   const RRR = api as unknown as PatchedChatGPTAPI &
@@ -353,6 +358,45 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     } else {
       return responseP;
     }
+  };
+
+  RRR.exportMessageList = async function exportMessageList(
+    parentMessageId: string,
+    systemMessage?: string
+  ) {
+    if (!systemMessage) {
+      systemMessage = this._systemMessage;
+    }
+
+    const messages: ChatMessage[] = [];
+
+    if (!(await this._getMessageById(parentMessageId))) {
+      return [];
+    }
+
+    if (systemMessage) {
+      messages.push({
+        id: '',
+        role: 'system',
+        text: systemMessage,
+      });
+    }
+
+    let next: ChatMessage | undefined;
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      next = await this._getMessageById(parentMessageId);
+      if (!next) {
+        break;
+      }
+      messages.push(next);
+      if (!next.parentMessageId) {
+        break;
+      }
+      parentMessageId = next.parentMessageId;
+    }
+
+    return messages;
   };
 
   return RRR as ChatGPTAPI & PatchedChatGPTAPI;
