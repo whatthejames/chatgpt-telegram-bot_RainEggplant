@@ -133,16 +133,28 @@ class CommandHandler {
         break;
 
       case '/role_info':
-        await this._bot.sendMessage(
-          msg.chat.id,
-          `now role is ${getNowRole().role} [ /role_${getNowRole().shortName} ]`
-        );
-        await this._bot.sendMessage(
-          msg.chat.id,
-          getRolePrompt(getNowRole())
+        {
+          await this._bot.sendMessage(
+            msg.chat.id,
+            `now role is ${getNowRole().role} [ /role_${
+              getNowRole().shortName
+            } ]`
+          );
+          const pp = getRolePrompt(getNowRole())
             ? 'prompt:\n' + getRolePrompt(getNowRole())
-            : 'no prompt'
-        );
+            : 'no prompt';
+          if (pp.length < 4096) {
+            await this._bot.sendMessage(msg.chat.id, pp);
+          } else {
+            // https://stackoverflow.com/a/7033662/3548568
+            const l = pp.match(/(.|[\r\n]){1,4000}/g);
+            if (l) {
+              for (const s of l) {
+                await this._bot.sendMessage(msg.chat.id, s);
+              }
+            }
+          }
+        }
         break;
 
       case '/reset':
