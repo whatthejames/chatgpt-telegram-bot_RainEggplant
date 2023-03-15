@@ -271,7 +271,7 @@ Current date: ${currentDate}`;
     if (this._context.parentMessageId) {
       return this._apiOfficial?.exportMessageList(
         this._context.parentMessageId,
-        getNowRole().prompt
+        getRolePrompt(getNowRole())
       );
     }
     return undefined;
