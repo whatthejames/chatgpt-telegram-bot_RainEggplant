@@ -80,6 +80,11 @@ class CommandHandler {
             'Conversation Context\n' +
             '  • /get_context get a save point for Context.\n' +
             '  • /print_save_point print Save Point Every Message.\n' +
+            'Max Tokens\n' +
+            '  • /get_max_response_tokens get max response tokens.\n' +
+            '  • /set_max_response_tokens set max response tokens.\n' +
+            '  • /get_max_model_tokens get max model tokens.\n' +
+            '  • /set_max_model_tokens set max model tokens.\n' +
             ''
         );
         break;
@@ -161,6 +166,11 @@ class CommandHandler {
         }
         break;
 
+      case '/system_custom_clear':
+        await setCustom('', this._api.keyv);
+        await this._bot.sendMessage(msg.chat.id, `ok`);
+        break;
+
       case '/get_max_response_tokens':
         await this._bot.sendMessage(
           msg.chat.id,
@@ -207,11 +217,6 @@ class CommandHandler {
           }
           await this._bot.sendMessage(msg.chat.id, `failed`);
         }
-        break;
-
-      case '/system_custom_clear':
-        await setCustom('', this._api.keyv);
-        await this._bot.sendMessage(msg.chat.id, `ok`);
         break;
 
       case '/reload':
