@@ -144,7 +144,17 @@ class ChatGPT {
     if (this.apiType == 'official') {
       if (!this._apiOfficial) return;
       if (getRolePrompt(getNowRole())) {
-        (this._apiOfficial as any)._systemMessage = getRolePrompt(getNowRole());
+        (this._apiOfficial as PatchedChatGPTAPI)._systemMessage = getRolePrompt(
+          getNowRole()
+        )!;
+      } else {
+        const currentDate = new Date().toISOString().split('T')[0];
+        // copy from lib https://github.com/transitive-bullshit/chatgpt-api/blob/main/src/chatgpt-api.ts
+        (
+          this._apiOfficial as PatchedChatGPTAPI
+        )._systemMessage = `You are ChatGPT, a large language model trained by OpenAI. Answer as concisely as possible.
+Knowledge cutoff: 2021-09-01
+Current date: ${currentDate}`;
       }
       // console.log(
       //   '(this._apiOfficial as any)._systemMessage',
