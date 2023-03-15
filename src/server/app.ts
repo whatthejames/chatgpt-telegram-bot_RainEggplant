@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import express from 'express';
 import Router from 'express-promise-router';
 
@@ -8,6 +9,33 @@ import {ChatMessage} from 'chatgpt';
 export class ServerApp {
   app = express();
   router = Router();
+
+  async getMessageList(savePoint: string) {
+    const oldPoint = await this.chatGPT.getContext();
+    try {
+      if (await this.chatGPT.resetContext(savePoint)) {
+        const mm = await this.chatGPT.exportMessageList();
+        if (mm && mm.length > 0) {
+          await this.chatGPT.resetContext(oldPoint);
+          return mm;
+        }
+      }
+    } catch (e: any) {
+      console.error(e);
+      await this.chatGPT.resetContext(oldPoint);
+      return e.message;
+    }
+    await this.chatGPT.resetContext(oldPoint);
+    return undefined;
+  }
+
+  format = (m: ChatMessage[]) => {
+    return m
+      .map((T) => {
+        return `${T.id} : ${T.role} \n${T.text}`;
+      })
+      .join('\n\n\n');
+  };
 
   constructor(
     protected keyv: Keyv,
@@ -20,51 +48,29 @@ export class ServerApp {
     this.router.get('/', async (req, res) => {
       res.send('Test');
     });
+    this.router.get(/^\/html\/resetContext_/, async (req, res) => {
+      const savePoint = req.path.replace(/^\/html\/resetContext_/, '');
+      const m = await this.getMessageList(savePoint);
+      if (_.isArray(m)) {
+        return res.send(`<pre>${this.format(m)}\n</pre>`);
+      }
+      return res.send(m);
+    });
     this.router.get(/^\/resetContext_/, async (req, res) => {
       const savePoint = req.path.replace(/^\/resetContext_/, '');
-      const oldPoint = await chatGPT.getContext();
-      try {
-        const format = (m: ChatMessage[]) => {
-          return m
-            .map((T) => {
-              return `${T.id} : ${T.role} \n${T.text}`;
-            })
-            .join('\n\n\n');
-        };
-        if (await chatGPT.resetContext(savePoint)) {
-          const mm = await chatGPT.exportMessageList();
-          if (mm && mm.length > 0) {
-            const out = format(mm);
-            await chatGPT.resetContext(oldPoint);
-            return res.send(out);
-          }
-        }
-      } catch (e: any) {
-        console.error(e);
-        await chatGPT.resetContext(oldPoint);
-        return res.send(e.message);
+      const m = await this.getMessageList(savePoint);
+      if (_.isArray(m)) {
+        return res.send(this.format(m));
       }
-      await chatGPT.resetContext(oldPoint);
-      return res.send('undefined');
+      return res.send(m);
     });
     this.router.get(/^\/json\/resetContext_/, async (req, res) => {
       const savePoint = req.path.replace(/^\/json\/resetContext_/, '');
-      const oldPoint = await chatGPT.getContext();
-      try {
-        if (await chatGPT.resetContext(savePoint)) {
-          const mm = await chatGPT.exportMessageList();
-          if (mm && mm.length > 0) {
-            await chatGPT.resetContext(oldPoint);
-            return res.send(JSON.stringify(mm));
-          }
-        }
-      } catch (e: any) {
-        console.error(e);
-        await chatGPT.resetContext(oldPoint);
-        return res.send(e.message);
+      const m = await this.getMessageList(savePoint);
+      if (_.isArray(m)) {
+        return res.json(m);
       }
-      await chatGPT.resetContext(oldPoint);
-      return res.send('undefined');
+      return res.send(m);
     });
 
     this.app.listen(port, host);
