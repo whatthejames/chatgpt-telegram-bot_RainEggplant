@@ -63,8 +63,8 @@ export class ServerApp {
 <head>
   <meta charset='UTF-8'>
 </head>
-<body style='width: 100%;'>
-  <div style='width: 100%;'>
+<body style='width: 100%;overflow-x: hidden;'>
+  <div style='width: calc(100% - 3em);'>
   <br>
   ${this.format(m).replace(/\n/g, '<br>')}
   <br>
