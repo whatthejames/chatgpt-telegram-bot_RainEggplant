@@ -270,7 +270,8 @@ Current date: ${currentDate}`;
   async exportMessageList() {
     if (this._context.parentMessageId) {
       return this._apiOfficial?.exportMessageList(
-        this._context.parentMessageId
+        this._context.parentMessageId,
+        getNowRole().prompt
       );
     }
     return undefined;
