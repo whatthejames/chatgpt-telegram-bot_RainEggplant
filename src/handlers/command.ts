@@ -16,17 +16,26 @@ import {
 import {globalConfig} from '../GlobalConfig';
 import lodash from 'lodash';
 import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
+import Keyv from 'keyv';
 
 class CommandHandler {
   debug: number;
   protected _opts: BotOptions;
   protected _bot: TelegramBot;
   protected _api: ChatGPT;
+  protected _keyv: Keyv;
 
-  constructor(bot: TelegramBot, api: ChatGPT, botOpts: BotOptions, debug = 1) {
+  constructor(
+    bot: TelegramBot,
+    api: ChatGPT,
+    keyv: Keyv,
+    botOpts: BotOptions,
+    debug = 1
+  ) {
     this.debug = debug;
     this._bot = bot;
     this._api = api;
+    this._keyv = keyv;
     this._opts = botOpts;
   }
 
@@ -158,7 +167,7 @@ class CommandHandler {
           msg.chat.id,
           `now printSavePointEveryMessage is: ${globalConfig.printSavePointEveryMessage}`
         );
-        await this._api.keyv.set(
+        await this._keyv.set(
           'globalConfig:printSavePointEveryMessage',
           globalConfig.printSavePointEveryMessage
         );

@@ -6,6 +6,7 @@ import {Authenticator} from './authentication';
 import {ChatHandler} from './chat';
 import {CommandHandler} from './command';
 import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
+import Keyv from 'keyv';
 
 class MessageHandler {
   debug: number;
@@ -16,15 +17,29 @@ class MessageHandler {
   protected _authenticator: Authenticator;
   protected _commandHandler: CommandHandler;
   protected _chatHandler: ChatHandler;
+  protected _keyv: Keyv;
 
-  constructor(bot: TelegramBot, api: ChatGPT, botOpts: BotOptions, debug = 1) {
+  constructor(
+    bot: TelegramBot,
+    api: ChatGPT,
+    keyv: Keyv,
+    botOpts: BotOptions,
+    debug = 1
+  ) {
     this.debug = debug;
     this._bot = bot;
+    this._keyv = keyv;
     this._api = api as ChatGPT;
     this._opts = botOpts;
     this._authenticator = new Authenticator(bot, botOpts, debug);
-    this._commandHandler = new CommandHandler(bot, this._api, botOpts, debug);
-    this._chatHandler = new ChatHandler(bot, api, botOpts, debug);
+    this._commandHandler = new CommandHandler(
+      bot,
+      this._api,
+      keyv,
+      botOpts,
+      debug
+    );
+    this._chatHandler = new ChatHandler(bot, api, keyv, botOpts, debug);
   }
 
   init = async () => {

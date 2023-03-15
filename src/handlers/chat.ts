@@ -9,6 +9,7 @@ import {logWithTime} from '../utils';
 import Queue from 'promise-queue';
 import {globalConfig} from '../GlobalConfig';
 import {SendMessageReturn} from '../PatchChatGPTAPI';
+import Keyv from 'keyv';
 
 class ChatHandler {
   debug: number;
@@ -20,12 +21,20 @@ class ChatHandler {
   protected _apiRequestsQueue = new Queue(1, Infinity);
   protected _positionInQueue: Record<string, number> = {};
   protected _updatePositionQueue = new Queue(20, Infinity);
+  protected _keyv: Keyv;
 
-  constructor(bot: TelegramBot, api: ChatGPT, botOpts: BotOptions, debug = 1) {
+  constructor(
+    bot: TelegramBot,
+    api: ChatGPT,
+    keyv: Keyv,
+    botOpts: BotOptions,
+    debug = 1
+  ) {
     this.debug = debug;
     this._bot = bot;
     this._api = api;
     this._opts = botOpts;
+    this._keyv = keyv;
   }
 
   handle = async (msg: TelegramBot.Message, text: string) => {

@@ -48,7 +48,13 @@ async function main() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     request: {proxy: opts.proxy} as any,
   });
-  const messageHandler = new MessageHandler(bot, api, opts.bot, opts.debug);
+  const messageHandler = new MessageHandler(
+    bot,
+    api,
+    keyv,
+    opts.bot,
+    opts.debug
+  );
   await messageHandler.init();
 
   bot.on('message', messageHandler.handle);
