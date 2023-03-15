@@ -368,18 +368,10 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
       systemMessage = this._systemMessage;
     }
 
-    const messages: ChatMessage[] = [];
+    let messages: ChatMessage[] = [];
 
     if (!(await this._getMessageById(parentMessageId))) {
       return [];
-    }
-
-    if (systemMessage) {
-      messages.push({
-        id: '',
-        role: 'system',
-        text: systemMessage,
-      });
     }
 
     let next: ChatMessage | undefined;
@@ -395,6 +387,16 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
       }
       parentMessageId = next.parentMessageId;
     }
+
+    if (systemMessage) {
+      messages.push({
+        id: '',
+        role: 'system',
+        text: systemMessage,
+      });
+    }
+
+    messages = messages.reverse();
 
     return messages;
   };
