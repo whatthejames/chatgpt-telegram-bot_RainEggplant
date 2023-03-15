@@ -102,12 +102,12 @@ class CommandHandler {
         await this._bot.sendMessage(
           msg.chat.id,
           'roles \n' +
-          `${roles
-            .map((T) => `${T.role} [ /role_${T.shortName} ]`)
-            .join('\n')}\n` +
-          `now role is ${getNowRole().role} [ /role_${
-            getNowRole().shortName
-          } ]`
+            `${roles
+              .map((T) => `${T.role} [ /role_${T.shortName} ]`)
+              .join('\n')}\n` +
+            `now role is ${getNowRole().role} [ /role_${
+              getNowRole().shortName
+            } ]`
         );
         break;
 

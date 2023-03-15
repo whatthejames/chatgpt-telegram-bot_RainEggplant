@@ -16,7 +16,13 @@ import {
 import {logWithTime} from './utils';
 import Keyv, {Store} from 'keyv';
 // import KeyvRedis from '@keyv/redis';
-import {getNowRole, getRolePrompt, loadCustomFromStorage} from './promptsRole';
+import {
+  getNowRole,
+  getRolePrompt,
+  loadCustomFromStorage,
+  rolesMap,
+  setNowRole,
+} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import QuickLRU from 'quick-lru';
 import {
@@ -194,18 +200,20 @@ class ChatGPT {
     return Buffer.from(
       `${this._context.conversationId || ''}:::${
         this._context.parentMessageId || ''
-      }`
+      }:::${getNowRole().shortName || ''}`
     ).toString('base64');
   }
 
   async resetContext(c: string) {
     try {
       const cc = Buffer.from(c, 'base64').toString('utf-8').split(':::');
-      if (cc && cc.length !== 2) {
+      if (cc && cc.length < 2) {
         return false;
       }
       const conversationId = cc[0] && cc[0].length > 0 ? cc[0] : undefined;
       const parentMessageId = cc[1] && cc[1].length > 0 ? cc[1] : undefined;
+      const roleShortName =
+        cc.length >= 3 && cc[2] && cc[2].length > 0 ? cc[2] : undefined;
       if (!parentMessageId) {
         return false;
       }
@@ -217,6 +225,12 @@ class ChatGPT {
         conversationId,
         parentMessageId,
       };
+      if (roleShortName) {
+        const n = rolesMap.get(roleShortName);
+        if (n) {
+          setNowRole(n);
+        }
+      }
       return true;
     } catch (e) {
       console.error(e);
