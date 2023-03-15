@@ -42,7 +42,7 @@ export class ServerApp {
     protected keyv: Keyv,
     protected chatGPT: ChatGPT,
     protected host = '0.0.0.0',
-    protected port = 3033,
+    protected port = 3033
   ) {
     this.app.use(this.router);
 
@@ -84,8 +84,7 @@ export class ServerApp {
         return res.send('undefined');
       }
       const result: {id: string; text: string}[] = [];
-      for await (const d of this.keyv.iterator()) {
-        console.log(d);
+      for await (const [k, d] of this.keyv.iterator()) {
         if (d && d.text && _.isString(d.text) && d.id && _.isString(d.id)) {
           if ((d.text as string).search(s) !== -1) {
             result.push({
