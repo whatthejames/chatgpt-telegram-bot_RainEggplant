@@ -34,7 +34,7 @@ export class ServerApp {
       .map((T) => {
         return `${T.id} : ${T.role} \n${T.text}`;
       })
-      .join('\n\n\n');
+      .join('\n\n\n\n\n\n');
   };
 
   constructor(
