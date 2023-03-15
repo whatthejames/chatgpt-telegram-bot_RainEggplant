@@ -101,7 +101,7 @@ class CommandHandler {
             '  • /get_max_model_tokens 显示最大模型 tokens.\n' +
             '  • /set_max_model_tokens 设置最大模型 tokens.\n' +
             '  •  •  • 在提示剩余token不足以生成回答时可以调小max_response_tokens并再次重新发送提问来避开限制\n' +
-            '  •  •  • 调整max_response_tokens的大小也会影响回答的结果，越小越倾向于更简单的思考；越大越倾向于更加复杂的思考。调小可以避免过拟合，调大可以避免\n' +
+            '  •  •  • 调整max_response_tokens的大小也会影响回答的结果，越小越倾向于更简单的思考；越大越倾向于更加复杂的思考。调小可以避免过拟合，调大可以获得更复杂的角色扮演效果。\n' +
             ''
         );
         break;
