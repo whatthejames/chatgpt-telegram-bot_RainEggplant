@@ -122,6 +122,7 @@ class ChatHandler {
         chatId,
         "⚠️ Sorry, I'm having trouble connecting to the server, please try again later."
       );
+      this._bot.sendMessage(chatId, (err as Error).message);
     }
 
     // Update queue order after finishing current request
