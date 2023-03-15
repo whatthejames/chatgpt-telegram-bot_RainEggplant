@@ -5,6 +5,8 @@ import {logWithTime} from '../utils';
 import {
   getNowRole,
   getRolePrompt,
+  loadCustomFromStorage,
+  loadFromJsonFile,
   roles,
   rolesMap,
   saveCustomFrom,
@@ -68,6 +70,7 @@ class CommandHandler {
             '  • /help Show help information.\n' +
             '  • /reset Reset the current chat thread and start a new one.\n' +
             '  • /reload (admin required) Refresh the ChatGPT session.' +
+            '  • /hot_load_prompt_json  hot load prompt.json file.' +
             'System Role Config\n' +
             '  • /roles list all roles , use this to list all available roles.\n' +
             '  • /role now role.\n' +
@@ -89,16 +92,22 @@ class CommandHandler {
         );
         break;
 
+      case '/hot_load_prompt_json':
+        await loadFromJsonFile();
+        await loadCustomFromStorage(this._api.keyv);
+        await this._bot.sendMessage(msg.chat.id, 'ok');
+        break;
+
       case '/roles':
         await this._bot.sendMessage(
           msg.chat.id,
           'roles \n' +
-            `${roles
-              .map((T) => `${T.role} [ /role_${T.shortName} ]`)
-              .join('\n')}\n` +
-            `now role is ${getNowRole().role} [ /role_${
-              getNowRole().shortName
-            } ]`
+          `${roles
+            .map((T) => `${T.role} [ /role_${T.shortName} ]`)
+            .join('\n')}\n` +
+          `now role is ${getNowRole().role} [ /role_${
+            getNowRole().shortName
+          } ]`
         );
         break;
 

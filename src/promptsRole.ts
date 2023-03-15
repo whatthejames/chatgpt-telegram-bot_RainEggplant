@@ -91,10 +91,15 @@ export const rolesMap = new Map<string, RoleInfo>();
 
 let nowRole_: RoleInfo;
 
-const init = (roles_: RoleInfo[]) => {
+const init = (roles_: RoleInfo[], nowRoleShortName?: string) => {
   roles = roles_;
   roles_.forEach((T) => rolesMap.set(T.shortName, T));
-  nowRole_ = rolesMap.get('default')!;
+  const n = rolesMap.get(nowRoleShortName || 'default');
+  if (n) {
+    nowRole_ = n;
+  } else {
+    nowRole_ = roles_[0];
+  }
 };
 init(roles);
 
@@ -161,7 +166,7 @@ export const loadFromJsonFile = async () => {
         return T.role.length > 0 && T.shortName.length > 0;
       })
     ) {
-      init(j);
+      init(j, nowRole_.shortName);
       console.log('loadFromJsonFile ok');
     }
   } catch (e) {
