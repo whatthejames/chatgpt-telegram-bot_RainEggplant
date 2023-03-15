@@ -91,10 +91,14 @@ class ChatHandler {
         )
       );
 
-      if ((res as SendMessageReturn).numTokens) {
+      if (
+        (res as SendMessageReturn).numTokens &&
+        (res as SendMessageReturn).maxTokens
+      ) {
         await this._bot.sendMessage(
           chatId,
-          `numTokens : ${(res as SendMessageReturn).numTokens} `
+          `numTokens : ${(res as SendMessageReturn).numTokens} , ` +
+            `maxTokens : ${(res as SendMessageReturn).maxTokens} `
         );
       }
       if (globalConfig.printSavePointEveryMessage) {

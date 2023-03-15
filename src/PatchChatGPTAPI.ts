@@ -13,7 +13,10 @@ import pTimeout from 'p-timeout';
 import {v4 as uuidv4} from 'uuid';
 import {createParser} from 'eventsource-parser';
 
-export type SendMessageReturn = ChatMessage & {numTokens: number};
+export type SendMessageReturn = ChatMessage & {
+  numTokens: number;
+  maxTokens: number;
+};
 
 export interface PatchedChatGPTAPI {
   _buildMessages(
@@ -182,7 +185,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
       opts
     );
 
-    console.log('numTokens', numTokens);
+    console.log('messages', messages);
 
     const result: SendMessageReturn = {
       role: 'assistant',
@@ -190,6 +193,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
       parentMessageId: messageId,
       text: '',
       numTokens: numTokens,
+      maxTokens: maxTokens,
     };
 
     const responseP = new Promise<SendMessageReturn>(
