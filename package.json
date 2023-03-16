@@ -59,6 +59,8 @@
     "express-promise-router": "^4.1.1",
     "extensionless": "^1.1.5",
     "https-proxy-agent": "^5.0.1",
+    "json5": "^2.2.3",
+    "keyv": "^4.5.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "node-fetch": "^3.3.1",

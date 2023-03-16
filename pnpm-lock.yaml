@@ -23,6 +23,8 @@ specifiers:
   extensionless: ^1.1.5
   https-proxy-agent: ^5.0.1
   husky: ^8.0.3
+  json5: ^2.2.3
+  keyv: ^4.5.2
   lint-staged: ^13.1.2
   lodash: ^4.17.21
   moment: ^2.29.4
@@ -48,6 +50,8 @@ dependencies:
   express-promise-router: 4.1.1_ggo4t6aanj3kpaprsqb37ppxvm
   extensionless: 1.1.5
   https-proxy-agent: 5.0.1
+  json5: 2.2.3
+  keyv: 4.5.2
   lodash: 4.17.21
   moment: 2.29.4
   node-fetch: 3.3.1
