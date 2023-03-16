@@ -140,4 +140,4 @@ dist
 # Config files
 config/local*.json
 
-tool/process_prompts.js
+tool/**/*
