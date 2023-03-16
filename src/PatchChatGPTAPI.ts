@@ -225,7 +225,7 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     const responseP = new Promise<SendMessageReturn>(
       // eslint-disable-next-line no-async-promise-executor
       async (resolve, reject) => {
-        const url = `${this._apiBaseUrl}/v1/chat/completions`;
+        const url = `${this._apiBaseUrl}/chat/completions`;
         const headers = {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${this._apiKey}`,
