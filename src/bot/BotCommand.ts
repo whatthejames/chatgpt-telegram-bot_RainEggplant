@@ -173,7 +173,7 @@ export class BotCommand {
         const n = parseInt(text);
         if (_.isSafeInteger(n)) {
           await this.gpt.setMaxResponseTokens(n);
-          await ctx.sendMessage(
+          return await ctx.sendMessage(
             `ok. now MaxResponseTokens is ${this.gpt.getMaxResponseTokens()}`
           );
         }
@@ -198,7 +198,7 @@ export class BotCommand {
         const n = parseInt(text);
         if (_.isSafeInteger(n)) {
           await this.gpt.setMaxModelTokens(n);
-          await ctx.sendMessage(
+          return await ctx.sendMessage(
             `ok. now MaxModelTokens is ${this.gpt.getMaxModelTokens()}`
           );
         }
