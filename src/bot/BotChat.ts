@@ -163,6 +163,26 @@ export class BotChat {
         "⚠️ Sorry, I'm having trouble connecting to the server, please try again later."
       );
       await this.bot.telegram.sendMessage(chatId, (err as Error).message);
+      if (
+        _.isString((err as Error).message) &&
+        (err as Error).message.startsWith('ChatGPT error 400')
+      ) {
+        const r =
+          /This model's maximum context length is (\d+) tokens\. However, you requested (\d+) tokens \((\d+) in the messages, (\d+) in the completion\)\. Please reduce the length of the messages or completion\./;
+        const m = (err as Error).message.match(r);
+        if (m) {
+          const M = _.parseInt(m[1]);
+          const RM = _.parseInt(m[2]);
+          const P = _.parseInt(m[3]);
+          const C = _.parseInt(m[4]);
+          await this.bot.telegram.sendMessage(
+            chatId,
+            `${M}-${P}=${M - P} > ${C}, you can set_max_response_tokens < ${
+              M - P
+            }`
+          );
+        }
+      }
     }
 
     // Update queue order after finishing current request
