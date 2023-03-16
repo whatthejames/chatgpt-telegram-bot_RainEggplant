@@ -5,7 +5,6 @@ import {logWithTime} from '../utils';
 import {Authenticator} from './authentication';
 import {ChatHandler} from './chat';
 import {CommandHandler} from './command';
-import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
 import Keyv from 'keyv';
 
 class MessageHandler {

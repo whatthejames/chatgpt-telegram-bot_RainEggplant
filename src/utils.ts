@@ -1,6 +1,5 @@
 import type {FetchFn, openai} from 'chatgpt';
 import config from 'config';
-import pkg from 'https-proxy-agent';
 import fetch, {type RequestInfo, type RequestInit} from 'node-fetch';
 import {
   Config,
@@ -8,8 +7,9 @@ import {
   APIOfficialOptions,
   APIUnofficialOptions,
 } from './types';
-
-const {HttpsProxyAgent} = pkg;
+import {SocksProxyAgent} from 'socks-proxy-agent';
+import HttpsProxyAgent from 'https-proxy-agent';
+import * as http from 'http';
 
 function loadConfig(): Config {
   function tryGet<T>(key: string): T | undefined {
@@ -23,7 +23,12 @@ function loadConfig(): Config {
   let fetchFn: FetchFn | undefined = undefined;
   const proxy = tryGet<string>('proxy') || process.env.http_proxy;
   if (proxy) {
-    const proxyAgent = new HttpsProxyAgent(proxy);
+    let proxyAgent: http.Agent;
+    if (proxy.startsWith('socks5://')) {
+      proxyAgent = new SocksProxyAgent(proxy);
+    } else {
+      proxyAgent = new HttpsProxyAgent.HttpsProxyAgent(proxy);
+    }
     fetchFn = ((url, opts) =>
       fetch(
         url as RequestInfo,
