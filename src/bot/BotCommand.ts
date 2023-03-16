@@ -30,12 +30,12 @@ export class BotCommand {
       const completionParamsInfo = this.gpt.getCompletionParams();
       const completionParamsInfoString = completionParamsInfo
         ? `当前模型信息\n` +
-          `  • model ${completionParamsInfo?.model} \n` +
-          `  • temperature ${completionParamsInfo?.temperature} \n` +
-          `  • top_p ${completionParamsInfo?.top_p} \n` +
-          `  • frequency_penalty ${completionParamsInfo?.frequency_penalty} \n` +
-          `  • presence_penalty ${completionParamsInfo?.presence_penalty} \n` +
-          `  • max_tokens ${completionParamsInfo?.max_tokens} \n` +
+          `  • model : ${completionParamsInfo?.model} \n` +
+          `  • temperature : ${completionParamsInfo?.temperature} \n` +
+          `  • top_p : ${completionParamsInfo?.top_p} \n` +
+          `  • frequency_penalty : ${completionParamsInfo?.frequency_penalty} \n` +
+          `  • presence_penalty : ${completionParamsInfo?.presence_penalty} \n` +
+          `  • max_tokens : ${completionParamsInfo?.max_tokens} \n` +
           ''
         : '';
       await ctx.sendMessage(
@@ -76,7 +76,9 @@ export class BotCommand {
           `  • max_response_tokens : ${this.gpt.getMaxResponseTokens()} \n` +
           `  • max_model_tokens : ${this.gpt.getMaxModelTokens()} \n` +
           `  • print_save_point : ${globalConfig.printSavePointEveryMessage} \n` +
-          `  • role : ${getNowRole().role} [${getNowRole().shortName}] \n` +
+          `  • role : ${getNowRole().role} [ /role_${
+            getNowRole().shortName
+          } ] \n` +
           completionParamsInfoString +
           ''
       );
