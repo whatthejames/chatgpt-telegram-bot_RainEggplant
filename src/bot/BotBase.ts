@@ -12,8 +12,15 @@ export class BotBase {
   constructor(protected config: Config) {
     const proxy = config.proxy;
     if (proxy) {
-      if (proxy.startsWith('socks5://')) {
-        this.proxyAgent = new SocksProxyAgent(proxy);
+      const m = proxy.match(
+        /^socks[45][ha]?:\/\/((([^@.:]+)@([^@.:]+)):)?([^:]+):(\d+)$/
+      );
+      if (proxy.startsWith('socks') && m) {
+        console.log('socks.proxy.match', [m[5], m[6]]);
+        this.proxyAgent = new SocksProxyAgent({
+          hostname: m[5],
+          port: m[6],
+        });
       } else {
         this.proxyAgent = new HttpProxyAgent.HttpProxyAgent(proxy);
       }

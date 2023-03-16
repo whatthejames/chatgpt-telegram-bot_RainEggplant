@@ -1,6 +1,4 @@
-import TelegramBot from 'node-telegram-bot-api';
 import {ChatGPT} from './api';
-import {MessageHandler} from './handlers/message';
 import {loadConfig} from './utils';
 import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';

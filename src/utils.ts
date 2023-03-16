@@ -24,8 +24,15 @@ function loadConfig(): Config {
   const proxy = tryGet<string>('proxy') || process.env.http_proxy;
   if (proxy) {
     let proxyAgent: http.Agent;
-    if (proxy.startsWith('socks5://')) {
-      proxyAgent = new SocksProxyAgent(proxy);
+    const m = proxy.match(
+      /^socks[45][ha]?:\/\/((([^@.:]+)@([^@.:]+)):)?([^:]+):(\d+)$/
+    );
+    if (proxy.startsWith('socks') && m) {
+      console.log('proxy.match', [m[5], m[6]]);
+      proxyAgent = new SocksProxyAgent({
+        hostname: m[5],
+        port: m[6],
+      });
     } else {
       proxyAgent = new HttpsProxyAgent.HttpsProxyAgent(proxy);
     }
