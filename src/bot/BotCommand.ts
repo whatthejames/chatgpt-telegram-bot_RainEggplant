@@ -106,7 +106,7 @@ export class BotCommand {
     });
 
     this.bot.command('reset', async (ctx, next) => {
-      await ctx.sendMessage('typing');
+      await ctx.sendChatAction('typing');
       await this.gpt.resetThread();
       await ctx.sendMessage(
         '🔄 The chat thread has been reset. New chat thread started.'
