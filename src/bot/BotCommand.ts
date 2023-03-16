@@ -162,6 +162,15 @@ export class BotCommand {
       );
     });
 
+    this.bot.command('reset_max_response_tokens', async (ctx, next) => {
+      await this.gpt.setMaxResponseTokens(
+        this.config.api.official?.maxResponseTokens || 1000
+      );
+      return await ctx.sendMessage(
+        `ok. now MaxResponseTokens is ${this.gpt.getMaxResponseTokens()}`
+      );
+    });
+
     this.bot.command('set_max_response_tokens', async (ctx, next) => {
       let text = ctx.message.text ?? '';
       for (const entity of ctx.message.entities ?? []) {
@@ -184,6 +193,15 @@ export class BotCommand {
     this.bot.command('get_max_model_tokens', async (ctx, next) => {
       await ctx.sendMessage(
         `now MaxModelTokens is ${this.gpt.getMaxModelTokens()}`
+      );
+    });
+
+    this.bot.command('reset_max_model_tokens', async (ctx, next) => {
+      await this.gpt.setMaxModelTokens(
+        this.config.api.official?.maxModelTokens || 4000
+      );
+      return await ctx.sendMessage(
+        `ok. now MaxModelTokens is ${this.gpt.getMaxModelTokens()}`
       );
     });
 
