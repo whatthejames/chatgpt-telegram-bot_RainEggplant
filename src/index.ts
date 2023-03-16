@@ -7,16 +7,20 @@ import QuickLRU from 'quick-lru';
 import {globalConfig} from './GlobalConfig';
 import {loadFromJsonFile} from './promptsRole';
 import {ServerApp} from './server/app';
+import {BotBase} from './bot/BotBase';
+import {BotCommand} from './bot/BotCommand';
+import {BotAuthenticate} from './bot/BotAuthenticate';
+import {BotChat} from './bot/BotChat';
 
 let keyv: Keyv;
 
 async function main() {
-  const opts = loadConfig();
+  const config = loadConfig();
 
   await loadFromJsonFile();
 
-  if (opts.redis && opts.redis.length > 0) {
-    keyv = new Keyv(opts.redis);
+  if (config.redis && config.redis.length > 0) {
+    keyv = new Keyv(config.redis);
   } else {
     // same as npm chatgpt package
     keyv = new Keyv({
@@ -27,7 +31,6 @@ async function main() {
   keyv.on('error', (e: any) => {
     console.error(e);
   });
-
   {
     const pr = await keyv.get('globalConfig:printSavePointEveryMessage');
     if (pr !== undefined) {
@@ -40,32 +43,28 @@ async function main() {
   }
 
   // Initialize ChatGPT API.
-  const api = new ChatGPT(opts.api, keyv);
+  const api = new ChatGPT(config.api, keyv);
   await api.init();
 
-  // Initialize Telegram Bot and message handler.
-  const bot = new TelegramBot(opts.bot.token, {
-    polling: true,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    request: {proxy: opts.proxy} as any,
-  });
-  const messageHandler = new MessageHandler(
-    bot,
-    api,
-    keyv,
-    opts.bot,
-    opts.debug
-  );
-  await messageHandler.init();
+  const bot = new BotBase(config);
 
-  bot.on('message', messageHandler.handle);
+  const botAuthenticate = new BotAuthenticate(bot.bot, keyv, config);
+  await botAuthenticate.register();
 
-  if (opts.server.port) {
+  const botCmd = new BotCommand(bot.bot, api, keyv, config);
+  await botCmd.register();
+
+  const botChat = new BotChat(bot.bot, api, keyv, config);
+  await botChat.register();
+
+  await bot.finalStart();
+
+  if (config.server.port) {
     const serverApp = new ServerApp(
       keyv,
       api,
-      opts.server.host,
-      opts.server.port
+      config.server.host,
+      config.server.port
     );
   }
 }
