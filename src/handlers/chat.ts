@@ -149,7 +149,7 @@ class ChatHandler {
       return msg;
     }
     try {
-      text = telegramifyMarkdown(text);
+      text = telegramifyMarkdown(text, 'escape');
       const res = await this._bot.editMessageText(text, {
         chat_id: msg.chat.id,
         message_id: msg.message_id,

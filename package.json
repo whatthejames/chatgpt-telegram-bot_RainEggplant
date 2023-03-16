@@ -39,9 +39,9 @@
     "@types/node-telegram-bot-api": "^0.57.7",
     "@types/promise-queue": "^2.2.0",
     "@types/uuid": "^9.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.54.1",
-    "@typescript-eslint/parser": "^5.54.1",
-    "eslint": "^8.35.0",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.7.0",
     "husky": "^8.0.3",
     "lint-staged": "^13.1.2",
@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@keyv/redis": "^2.5.6",
-    "chatgpt": "^5.0.8",
+    "chatgpt": "^5.1.1",
     "config": "^3.3.9",
     "dotenv": "^16.0.3",
     "eventsource-parser": "^0.0.5",
@@ -59,20 +59,20 @@
     "express-promise-router": "^4.1.1",
     "extensionless": "^1.1.1",
     "https-proxy-agent": "^5.0.1",
-    "json5": "^2.2.3",
-    "keyv": "^4.5.2",
+    "extensionless": "^1.1.5",
+    "https-proxy-agent": "^5.0.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^3.3.1",
     "node-telegram-bot-api": "^0.60.0",
     "p-timeout": "^6.1.1",
     "promise-queue": "^2.2.5",
     "quick-lru": "^6.1.1",
-    "telegramify-markdown": "^1.0.6",
+    "telegramify-markdown": "^1.1.0",
     "uuid": "^9.0.0"
   },
   "optionalDependencies": {
     "chatgpt-v3": "npm:chatgpt@3.5.1",
-    "puppeteer": "^19.7.3"
+    "puppeteer": "^19.7.5"
   }
 }
