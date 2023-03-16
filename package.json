@@ -47,10 +47,12 @@
     "lint-staged": "^13.1.2",
     "prettier": "^2.8.4",
     "tsc-watch": "^6.0.0",
+    "typegram": "^4.3.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "@keyv/redis": "^2.5.6",
+    "@telegraf/session": "2.0.0-beta.6",
     "chatgpt": "^5.1.1",
     "config": "^3.3.9",
     "dotenv": "^16.0.3",
@@ -58,6 +60,7 @@
     "express": "^4.17.17",
     "express-promise-router": "^4.1.1",
     "extensionless": "^1.1.5",
+    "http-proxy-agent": "^5.0.0",
     "https-proxy-agent": "^5.0.1",
     "json5": "^2.2.3",
     "keyv": "^4.5.2",
@@ -68,9 +71,11 @@
     "p-timeout": "^6.1.1",
     "promise-queue": "^2.2.5",
     "quick-lru": "^6.1.1",
+    "redis": "^4.6.5",
+    "socks-proxy-agent": "^7.0.0",
+    "telegraf": "^4.12.2",
     "telegramify-markdown": "^1.1.0",
-    "uuid": "^9.0.0",
-    "telegraf": "^4.12.2"
+    "uuid": "^9.0.0"
   },
   "optionalDependencies": {
     "chatgpt-v3": "npm:chatgpt@3.5.1",
