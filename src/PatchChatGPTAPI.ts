@@ -54,6 +54,11 @@ export interface PatchedChatGPTAPI {
 
   getMaxModelTokens(): number;
 
+  getCompletionParams(): Omit<
+    openai.CreateChatCompletionRequest,
+    'messages' | 'n'
+  >;
+
   exportMessageList(
     parentMessageId: string,
     systemMessage?: string
@@ -79,6 +84,10 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
   };
   RRR.getMaxResponseTokens = function getMaxResponseTokens() {
     return this._maxResponseTokens;
+  };
+
+  RRR.getCompletionParams = function getCompletionParams() {
+    return this._completionParams;
   };
 
   RRR._buildMessages = async function _buildMessages(

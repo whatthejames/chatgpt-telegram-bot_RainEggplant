@@ -94,6 +94,10 @@ class ChatGPT {
     return this._apiOfficial?.getMaxModelTokens() || 0;
   };
 
+  getCompletionParams = () => {
+    return this._apiOfficial?.getCompletionParams();
+  };
+
   init = async () => {
     await loadCustomFromStorage(this.keyv);
 

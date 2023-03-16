@@ -27,6 +27,17 @@ export class BotCommand {
 
   async register() {
     this.bot.help(async (ctx, next) => {
+      const completionParamsInfo = this.gpt.getCompletionParams();
+      const completionParamsInfoString = completionParamsInfo
+        ? `当前模型信息\n` +
+          `  • model ${completionParamsInfo?.model} \n` +
+          `  • temperature ${completionParamsInfo?.temperature} \n` +
+          `  • top_p ${completionParamsInfo?.top_p} \n` +
+          `  • frequency_penalty ${completionParamsInfo?.frequency_penalty} \n` +
+          `  • presence_penalty ${completionParamsInfo?.presence_penalty} \n` +
+          `  • max_tokens ${completionParamsInfo?.max_tokens} \n` +
+          ''
+        : '';
       await ctx.sendMessage(
         'To chat with me, you can:\n' +
           '  • send messages directly (not supported in groups)\n' +
@@ -60,6 +71,13 @@ export class BotCommand {
           '  • /set_max_model_tokens 设置最大模型 tokens.\n' +
           '  •  •  • 在提示剩余token不足以生成回答时可以调小max_response_tokens并再次重新发送提问来避开限制\n' +
           '  •  •  • 调整max_response_tokens的大小也会影响回答的结果，越小越倾向于更简单的思考；越大越倾向于更加复杂的思考。调小可以避免过拟合，调大可以获得更复杂的角色扮演效果。\n' +
+          '\n\n' +
+          '当前相关设置\n' +
+          `  • max_response_tokens : ${this.gpt.getMaxResponseTokens()} \n` +
+          `  • max_model_tokens : ${this.gpt.getMaxModelTokens()} \n` +
+          `  • print_save_point : ${globalConfig.printSavePointEveryMessage} \n` +
+          `  • role : ${getNowRole().role} [${getNowRole().shortName}] \n` +
+          completionParamsInfoString +
           ''
       );
     });
