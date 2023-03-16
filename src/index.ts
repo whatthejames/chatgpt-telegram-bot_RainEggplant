@@ -71,6 +71,7 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error(err.message);
+  console.error(err.stack);
   process.exit(1);
 });
