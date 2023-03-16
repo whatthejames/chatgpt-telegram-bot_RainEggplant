@@ -137,7 +137,12 @@ export class BotCommand {
     });
 
     this.bot.command('system_custom', async (ctx, next) => {
-      const text = ctx.message.text;
+      let text = ctx.message.text ?? '';
+      for (const entity of ctx.message.entities ?? []) {
+        if (entity.type == 'bot_command' && entity.offset == 0) {
+          text = ctx.message.text?.slice(entity.length).trim() ?? '';
+        }
+      }
       if (text && text.length > 0) {
         await setCustom(text, this.gpt.keyv);
         await ctx.sendMessage(`ok`);
@@ -158,7 +163,12 @@ export class BotCommand {
     });
 
     this.bot.command('set_max_response_tokens', async (ctx, next) => {
-      const text = ctx.message.text;
+      let text = ctx.message.text ?? '';
+      for (const entity of ctx.message.entities ?? []) {
+        if (entity.type == 'bot_command' && entity.offset == 0) {
+          text = ctx.message.text?.slice(entity.length).trim() ?? '';
+        }
+      }
       if (text && text.length > 0) {
         const n = parseInt(text);
         if (_.isSafeInteger(n)) {
@@ -178,7 +188,12 @@ export class BotCommand {
     });
 
     this.bot.command('set_max_model_tokens', async (ctx, next) => {
-      const text = ctx.message.text;
+      let text = ctx.message.text ?? '';
+      for (const entity of ctx.message.entities ?? []) {
+        if (entity.type == 'bot_command' && entity.offset == 0) {
+          text = ctx.message.text?.slice(entity.length).trim() ?? '';
+        }
+      }
       if (text && text.length > 0) {
         const n = parseInt(text);
         if (_.isSafeInteger(n)) {
