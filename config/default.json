@@ -24,7 +24,12 @@
       // Please refer to "https://github.com/transitive-bullshit/chatgpt-api/blob/main/docs/classes/ChatGPTAPI.md#parameters"
       "apiKey": "API_KEY",
       "apiBaseUrl": "",
-      "completionParams": {},
+      "completionParams": {
+        "model": "gpt-3.5-turbo",
+        "temperature": 0.8,
+        "top_p": 1,
+        "presence_penalty": 1
+      },
       "systemMessage": "",
       "maxModelTokens": 0, // set to 0 to use default
       "maxResponseTokens": 0, // set to 0 to use default
