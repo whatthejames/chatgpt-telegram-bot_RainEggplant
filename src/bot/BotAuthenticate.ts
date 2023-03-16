@@ -4,8 +4,7 @@ import {Config} from '../types';
 import {logWithTime} from '../utils';
 
 export class BotAuthenticate {
-  constructor(public bot: Telegraf, public keyv: Keyv, public config: Config) {
-  }
+  constructor(public bot: Telegraf, public keyv: Keyv, public config: Config) {}
 
   async register() {
     this.bot.use((ctx, next) => {
@@ -21,7 +20,7 @@ export class BotAuthenticate {
             logWithTime('⚠️ Authentication failed for user ' + userInfo);
             ctx.sendMessage(
               '⛔️ Sorry, you are not my owner. I cannot chat with you or execute your command.\n' +
-              `chat id : ${ctx.chat.id}, user id : ${ctx.from?.id}`,
+                `chat id : ${ctx.chat.id}, user id : ${ctx.from?.id}`
             );
             return;
           }
@@ -40,11 +39,11 @@ export class BotAuthenticate {
             }
           }
           logWithTime(
-            `⚠️ Authentication failed for group ${ctx.chat?.title} (${ctx.chat?.id}).`,
+            `⚠️ Authentication failed for group ${ctx.chat?.title} (${ctx.chat?.id}).`
           );
           ctx.sendMessage(
             '⛔️ Sorry, you are not my owner. I cannot chat with you or execute your command.\n' +
-            `chat id : ${ctx.chat.id}, user id : ${ctx.from?.id}`,
+              `chat id : ${ctx.chat.id}, user id : ${ctx.from?.id}`
           );
           ctx.sendMessage('i only work in private chat this time.');
           return;
