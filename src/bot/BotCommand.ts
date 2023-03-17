@@ -16,10 +16,11 @@ import {
 import {logWithTime} from '../utils';
 import {globalConfig} from '../GlobalConfig';
 import _ from 'lodash';
+import {ExtendedContext} from './BotBase';
 
 export class BotCommand {
   constructor(
-    public bot: Telegraf,
+    public bot: Telegraf<ExtendedContext>,
     public gpt: ChatGPT,
     public keyv: Keyv,
     public config: Config

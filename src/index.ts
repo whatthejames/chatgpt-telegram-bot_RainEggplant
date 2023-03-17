@@ -44,7 +44,7 @@ async function main() {
   const api = new ChatGPT(config.api, keyv);
   await api.init();
 
-  const bot = new BotBase(config);
+  const bot = new BotBase(config, keyv);
 
   const botAuthenticate = new BotAuthenticate(bot.bot, keyv, config);
   await botAuthenticate.register();

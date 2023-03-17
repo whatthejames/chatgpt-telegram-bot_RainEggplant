@@ -12,7 +12,7 @@ import type {ChatResponse as ChatResponseV3} from 'chatgpt-v3';
 import {SendMessageReturn} from '../PatchChatGPTAPI';
 import {globalConfig} from '../GlobalConfig';
 import telegramifyMarkdown from 'telegramify-markdown';
-import TextMessage = Message.TextMessage;
+import {ExtendedContext} from './BotBase';
 
 export class BotChat {
   protected _n_queued = 0;
@@ -22,7 +22,7 @@ export class BotChat {
   protected _updatePositionQueue = new Queue(20, Infinity);
 
   constructor(
-    public bot: Telegraf,
+    public bot: Telegraf<ExtendedContext>,
     public gpt: ChatGPT,
     public keyv: Keyv,
     public config: Config
@@ -62,6 +62,7 @@ export class BotChat {
   async register() {
     this.bot.on(message('text'), async (ctx, next) => {
       // ctx.message.text;
+      // ctx.session;
 
       // const r = await ctx.sendMessage('');
       // await this.bot.telegram.editMessageText(
@@ -83,7 +84,7 @@ export class BotChat {
       }
 
       // Send a message to the chat acknowledging receipt of their message
-      const reply: TextMessage = await ctx.reply('⌛');
+      const reply: Message.TextMessage = await ctx.reply('⌛');
 
       // add to sequence queue due to chatGPT processes only one request at a time
       const requestPromise = this._apiRequestsQueue.add(() => {
@@ -107,7 +108,7 @@ export class BotChat {
   protected _sendToGpt = async (
     text: string,
     chatId: number,
-    originalReply: TextMessage
+    originalReply: Message.TextMessage
   ) => {
     let reply = originalReply;
     await this.bot.telegram.sendChatAction(chatId, 'typing');
@@ -191,7 +192,7 @@ export class BotChat {
 
   // Edit telegram message
   protected _editMessage = async (
-    msg: TextMessage,
+    msg: Message.TextMessage,
     text: string,
     needParse = true
   ) => {
