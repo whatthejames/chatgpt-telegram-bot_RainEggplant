@@ -63,7 +63,8 @@ export class BotBase {
     // error catch
     this.bot.use(async (ctx, next) => {
       return next().catch((E) => {
-        console.error(E);
+        console.error(E.message);
+        console.error(E.stack);
       });
     });
 
