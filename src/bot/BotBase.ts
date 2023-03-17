@@ -60,6 +60,13 @@ export class BotBase {
       },
     });
 
+    // error catch
+    this.bot.use(async (ctx, next) => {
+      return next().catch((E) => {
+        console.error(E);
+      });
+    });
+
     if (config.redis && config.redis.length > 0) {
       // store to redis
       this.bot.use(session({store: Redis({url: config.redis})}));
