@@ -22,18 +22,13 @@ export class BotAuthenticate {
             this.config.bot.userIds.find((T) => ctx.from?.id === T) !==
               undefined
           ) {
-            const L = await this.keyv.get(`ChatGptTelegraf:InChat`);
-            const LL: Set<number> = _.isSet(L)
-              ? L
-              : _.isArray(L)
-              ? new Set(L)
-              : new Set<number>();
-            if (!LL.has(ctx.chat.id)) {
-              LL.add(ctx.chat.id);
-              await this.keyv.set(
-                `ChatGptTelegraf:InChat`,
-                Array.from(LL.entries())
-              );
+            let L: number[] | undefined = await this.keyv.get(
+              `ChatGptTelegraf:InChat`
+            );
+            L = _.isArray(L) ? L : [];
+            if (ctx.chat && !L.find((T) => T === ctx.chat?.id)) {
+              L.push(ctx.chat.id);
+              await this.keyv.set(`ChatGptTelegraf:InChat`, L);
             }
 
             return next();

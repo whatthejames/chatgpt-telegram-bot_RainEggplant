@@ -108,14 +108,13 @@ export class BotBase {
       dropPendingUpdates: true,
     });
 
-    const L = await this.keyv.get(`ChatGptTelegraf:InChat`);
-    const LL: Set<number> = _.isSet(L)
-      ? L
-      : _.isArray(L)
-      ? new Set<number>(L)
-      : new Set<number>();
-    for (const v of LL) {
-      await this.bot.telegram.sendMessage(v, `Hi, i'm back`);
+    const L: number[] | undefined = await this.keyv.get(
+      `ChatGptTelegraf:InChat`
+    );
+    if (L && _.isArray(L)) {
+      for (const v of L) {
+        await this.bot.telegram.sendMessage(v, `Hi, i'm back`);
+      }
     }
   }
 }
