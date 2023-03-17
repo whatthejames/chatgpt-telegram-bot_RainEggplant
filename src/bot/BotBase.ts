@@ -119,8 +119,10 @@ export class BotBase {
     const L: number[] | undefined = await this.keyv.get(
       `ChatGptTelegraf:InChat`
     );
+    console.log('ChatGptTelegraf:InChat : ', L);
     if (L && _.isArray(L)) {
       for (const v of L) {
+        console.log('send hello to : ', v);
         await this.bot.telegram.sendMessage(v, `Hi, i'm back`);
       }
     }
