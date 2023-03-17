@@ -58,6 +58,7 @@ async function main() {
   await bot.finalStart();
 
   if (config.server.port) {
+    console.log('start ServerApp');
     const serverApp = new ServerApp(
       keyv,
       api,

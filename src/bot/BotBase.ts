@@ -112,6 +112,7 @@ export class BotBase {
   }
 
   async finalStart() {
+    console.log('bot.launch');
     await this.bot.launch({
       dropPendingUpdates: true,
     });
