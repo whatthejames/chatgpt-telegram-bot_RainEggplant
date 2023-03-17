@@ -13,6 +13,16 @@ export class BotAuthenticate {
   ) {}
 
   async register() {
+    const rememberChat = async (chatId: number) => {
+      let L: number[] | undefined = await this.keyv.get(
+        `ChatGptTelegraf:InChat`
+      );
+      L = _.isArray(L) ? L : [];
+      if (!L.find((T) => T === chatId)) {
+        L.push(chatId);
+        await this.keyv.set(`ChatGptTelegraf:InChat`, L);
+      }
+    };
     this.bot.use(async (ctx, next) => {
       switch (ctx.chat?.type) {
         case 'private':
@@ -22,14 +32,7 @@ export class BotAuthenticate {
             this.config.bot.userIds.find((T) => ctx.from?.id === T) !==
               undefined
           ) {
-            let L: number[] | undefined = await this.keyv.get(
-              `ChatGptTelegraf:InChat`
-            );
-            L = _.isArray(L) ? L : [];
-            if (ctx.chat && !L.find((T) => T === ctx.chat?.id)) {
-              L.push(ctx.chat.id);
-              await this.keyv.set(`ChatGptTelegraf:InChat`, L);
-            }
+            await rememberChat(ctx.from.id);
 
             return next();
           } else {
@@ -45,13 +48,17 @@ export class BotAuthenticate {
         case 'group':
         case 'supergroup':
           if (
+            ctx.chat &&
             this.config.bot.groupIds.find((T) => ctx.chat?.id === T) !==
-            undefined
+              undefined
           ) {
             if (
+              ctx.from &&
               this.config.bot.userIds.find((T) => ctx.from?.id === T) !==
-              undefined
+                undefined
             ) {
+              await rememberChat(ctx.from.id);
+
               return next();
             }
           }
