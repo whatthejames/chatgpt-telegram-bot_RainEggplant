@@ -32,7 +32,7 @@ export class BotAuthenticate {
             this.config.bot.userIds.find((T) => ctx.from?.id === T) !==
               undefined
           ) {
-            await rememberChat(ctx.from.id);
+            await rememberChat(ctx.chat.id);
 
             return next();
           } else {
@@ -57,7 +57,7 @@ export class BotAuthenticate {
               this.config.bot.userIds.find((T) => ctx.from?.id === T) !==
                 undefined
             ) {
-              await rememberChat(ctx.from.id);
+              await rememberChat(ctx.chat.id);
 
               return next();
             }
