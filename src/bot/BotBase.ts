@@ -113,9 +113,14 @@ export class BotBase {
 
   async finalStart() {
     console.log('bot.launch');
-    await this.bot.launch({
-      dropPendingUpdates: true,
-    });
+    this.bot
+      .launch({
+        dropPendingUpdates: true,
+      })
+      .catch((E) => {
+        console.error(E.message);
+        console.error(E.stack);
+      });
 
     const L: number[] | undefined = await this.keyv.get(
       `ChatGptTelegraf:InChat`
