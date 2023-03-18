@@ -2,7 +2,7 @@ import {ChatGPT} from './api';
 import {loadConfig} from './utils';
 import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';
-import {globalConfig} from './GlobalConfig';
+import {GlobalConfig, globalConfig} from './GlobalConfig';
 import {loadFromJsonFile} from './promptsRole';
 import {ServerApp} from './server/app';
 import {BotBase} from './bot/BotBase';
@@ -29,16 +29,18 @@ async function main() {
   keyv.on('error', (e: any) => {
     console.error(e);
   });
-  {
-    const pr = await keyv.get('globalConfig:printSavePointEveryMessage');
+  const reloadGlobalConfig = async (globalConfigField: keyof GlobalConfig) => {
+    const pr = await keyv.get(`globalConfig:${globalConfigField}`);
     if (pr !== undefined) {
-      globalConfig.printSavePointEveryMessage = pr;
+      globalConfig[globalConfigField] = pr;
     }
     await keyv.set(
-      'globalConfig:printSavePointEveryMessage',
-      globalConfig.printSavePointEveryMessage
+      `globalConfig:${globalConfigField}`,
+      globalConfig[globalConfigField]
     );
-  }
+  };
+  await reloadGlobalConfig('printSavePointEveryMessage');
+  await reloadGlobalConfig('printTokensEveryMessage');
 
   // Initialize ChatGPT API.
   const api = new ChatGPT(config.api, keyv);

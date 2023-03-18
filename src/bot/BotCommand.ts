@@ -14,7 +14,7 @@ import {
   setNowRole,
 } from '../promptsRole';
 import {logWithTime} from '../utils';
-import {globalConfig} from '../GlobalConfig';
+import {GlobalConfig, globalConfig} from '../GlobalConfig';
 import _ from 'lodash';
 import {ExtendedContext} from './BotBase';
 
@@ -62,6 +62,7 @@ export class BotCommand {
           '对话上下文\n' +
           '  • /get_context 获取当前聊天上下文的的存档点.\n' +
           '  • /print_save_point [开关]在每一条消息后显示存档点.\n' +
+          '  • /print_tokens [开关]在每一条消息后显示当前的token数.\n' +
           '  •  •  • 可以通过直接发送存档点命令来回到指定的对话状态。\n' +
           '  •  •  • 默认存档的上下文信息保存在内存中，重启服务后失效。\n' +
           '  •  •  • 若redis数据库工作正常时存档的上下文信息会保存到redis数据库，服务重启后仍然可以使用保存的存档点。\n' +
@@ -77,6 +78,7 @@ export class BotCommand {
           `  • max_response_tokens : ${this.gpt.getMaxResponseTokens()} \n` +
           `  • max_model_tokens : ${this.gpt.getMaxModelTokens()} \n` +
           `  • print_save_point : ${globalConfig.printSavePointEveryMessage} \n` +
+          `  • print_tokens : ${globalConfig.printTokensEveryMessage} \n` +
           `  • role : ${getNowRole().role} [ /role_${
             getNowRole().shortName
           } ] \n` +
@@ -145,16 +147,26 @@ export class BotCommand {
       );
     });
 
-    this.bot.command('print_save_point', async (ctx, next) => {
-      globalConfig.printSavePointEveryMessage =
-        !globalConfig.printSavePointEveryMessage;
+    const toggleGlobalConfig = async (
+      ctx: ExtendedContext,
+      globalConfigField: keyof GlobalConfig
+    ) => {
+      globalConfig[globalConfigField] = !globalConfig[globalConfigField];
       await ctx.sendMessage(
-        `now printSavePointEveryMessage is: ${globalConfig.printSavePointEveryMessage}`
+        `now ${globalConfigField} is: ${globalConfig[globalConfigField]}`
       );
       await this.keyv.set(
-        'globalConfig:printSavePointEveryMessage',
-        globalConfig.printSavePointEveryMessage
+        `globalConfig:${globalConfigField}`,
+        globalConfig[globalConfigField]
       );
+    };
+
+    this.bot.command('print_save_point', async (ctx, next) => {
+      await toggleGlobalConfig(ctx, 'printSavePointEveryMessage');
+    });
+
+    this.bot.command('print_tokens', async (ctx, next) => {
+      await toggleGlobalConfig(ctx, 'printTokensEveryMessage');
     });
 
     this.bot.command('system_custom', async (ctx, next) => {

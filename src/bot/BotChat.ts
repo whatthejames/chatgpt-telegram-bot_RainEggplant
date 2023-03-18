@@ -134,7 +134,8 @@ export class BotChat {
       if (
         res &&
         (res.res as SendMessageReturn).numTokens &&
-        (res.res as SendMessageReturn).maxTokens
+        (res.res as SendMessageReturn).maxTokens &&
+        globalConfig.printTokensEveryMessage
       ) {
         await this.bot.telegram.sendMessage(
           chatId,
