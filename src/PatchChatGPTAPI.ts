@@ -8,7 +8,7 @@ import {
   SendMessageOptions,
   UpsertMessageFunction,
 } from 'chatgpt';
-import {getNowRole} from './promptsRole';
+import {getRoleMode} from './promptsRole';
 import pTimeout from 'p-timeout';
 import {v4 as uuidv4} from 'uuid';
 import {createParser} from 'eventsource-parser';
@@ -98,9 +98,10 @@ export const toPatchChatGPTAPI = (api: ChatGPTAPI) => {
     let {parentMessageId} = opts;
 
     const userLabel = USER_LABEL_DEFAULT;
+    const nowRoleUserName = getRoleMode().getNowRole().userName;
     const assistantLabel =
-      getNowRole().userName && getNowRole().userName!.length > 0
-        ? getNowRole().userName
+      nowRoleUserName && nowRoleUserName.length > 0
+        ? nowRoleUserName
         : ASSISTANT_LABEL_DEFAULT;
 
     const maxNumTokens = this._maxModelTokens - this._maxResponseTokens;

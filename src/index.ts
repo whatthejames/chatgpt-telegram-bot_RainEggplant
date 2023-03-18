@@ -3,7 +3,7 @@ import {loadConfig} from './utils';
 import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';
 import {GlobalConfig, globalConfig} from './GlobalConfig';
-import {loadFromJsonFile} from './promptsRole';
+import {initRoleMode} from './promptsRole';
 import {ServerApp} from './server/app';
 import {BotBase} from './bot/BotBase';
 import {BotCommand} from './bot/BotCommand';
@@ -14,8 +14,6 @@ let keyv: Keyv;
 
 async function main() {
   const config = loadConfig();
-
-  await loadFromJsonFile();
 
   if (config.redis && config.redis.length > 0) {
     keyv = new Keyv(config.redis);
@@ -41,6 +39,8 @@ async function main() {
   };
   await reloadGlobalConfig('printSavePointEveryMessage');
   await reloadGlobalConfig('printTokensEveryMessage');
+
+  await initRoleMode(keyv).loadFromJsonFile();
 
   // Initialize ChatGPT API.
   const api = new ChatGPT(config.api, keyv);

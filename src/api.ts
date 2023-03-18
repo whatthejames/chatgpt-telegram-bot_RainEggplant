@@ -14,17 +14,8 @@ import {
   APIUnofficialOptions,
 } from './types';
 import {logWithTime} from './utils';
-import Keyv, {Store} from 'keyv';
-// import KeyvRedis from '@keyv/redis';
-import {
-  getNowRole,
-  getRolePrompt,
-  loadCustomFromStorage,
-  loadCustomPoint,
-  rolesMap,
-  saveCustomPoint,
-  setNowRole,
-} from './promptsRole';
+import Keyv from 'keyv';
+import {getRoleMode} from './promptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import {
   PatchedChatGPTAPI,
@@ -99,7 +90,7 @@ class ChatGPT {
   };
 
   init = async () => {
-    await loadCustomFromStorage(this.keyv);
+    await getRoleMode().loadCustomFromStorage();
 
     if (this._opts.type == 'browser') {
       const {ChatGPTAPIBrowser} = await import('chatgpt-v3');
@@ -117,7 +108,7 @@ class ChatGPT {
           ...this._opts.official,
           messageStore: this.keyv,
           debug: true,
-          systemMessage: getRolePrompt(getNowRole()),
+          systemMessage: getRoleMode().getNowRolePrompt(),
           getMessageById: async (id: string) => {
             return this.getMessageById(id);
           },
@@ -151,10 +142,10 @@ class ChatGPT {
     let res: ChatResponseV3 | SendMessageReturn;
     if (this.apiType == 'official') {
       if (!this._apiOfficial) return;
-      if (getRolePrompt(getNowRole())) {
-        (this._apiOfficial as PatchedChatGPTAPI)._systemMessage = getRolePrompt(
-          getNowRole()
-        )!;
+      if (getRoleMode().getNowRolePrompt()) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (this._apiOfficial as PatchedChatGPTAPI)._systemMessage =
+          getRoleMode().getNowRolePrompt()!;
       } else {
         const currentDate = new Date().toISOString().split('T')[0];
         // copy from lib https://github.com/transitive-bullshit/chatgpt-api/blob/main/src/chatgpt-api.ts
@@ -172,7 +163,7 @@ Current date: ${currentDate}`;
         ...this._context,
         onProgress,
         timeoutMs: this._timeoutMs,
-        systemMessage: getRolePrompt(getNowRole()),
+        systemMessage: getRoleMode().getNowRolePrompt(),
       })) as SendMessageReturn;
       console.log('res', [
         res.role,
@@ -218,13 +209,14 @@ Current date: ${currentDate}`;
 
   async getContext() {
     let roleCustomSavePoint = '';
-    if (getNowRole().shortName === 'custom') {
-      roleCustomSavePoint = (await saveCustomPoint(this.keyv)) || '';
+    const shortName = getRoleMode().getNowRole().shortName;
+    if (shortName === 'custom') {
+      roleCustomSavePoint = (await getRoleMode().saveCustomPoint()) || '';
     }
     return Buffer.from(
       `${this._context.conversationId || ''}:::${
         this._context.parentMessageId || ''
-      }:::${getNowRole().shortName || ''}:::${roleCustomSavePoint}`
+      }:::${shortName || ''}:::${roleCustomSavePoint}`
     ).toString('base64');
   }
 
@@ -252,9 +244,9 @@ Current date: ${currentDate}`;
         parentMessageId,
       };
       if (roleShortName) {
-        const n = rolesMap.get(roleShortName);
+        const n = getRoleMode().rolesMap.get(roleShortName);
         if (n) {
-          setNowRole(n);
+          getRoleMode().setNowRole(n);
         }
       }
       if (
@@ -262,7 +254,7 @@ Current date: ${currentDate}`;
         roleCustomSavePoint &&
         roleCustomSavePoint.length > 0
       ) {
-        await loadCustomPoint(this.keyv, roleCustomSavePoint);
+        await getRoleMode().loadCustomPoint(roleCustomSavePoint);
       }
       return this._context;
     } catch (e) {
@@ -275,7 +267,7 @@ Current date: ${currentDate}`;
     if (this._context.parentMessageId) {
       return this._apiOfficial?.exportMessageList(
         this._context.parentMessageId,
-        getRolePrompt(getNowRole())
+        getRoleMode().getNowRolePrompt()
       );
     }
     return undefined;

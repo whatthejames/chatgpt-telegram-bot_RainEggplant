@@ -2,17 +2,7 @@
 import type {ChatGPT} from '../api';
 import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
-import {
-  getNowRole,
-  getRolePrompt,
-  loadCustomFromStorage,
-  loadFromJsonFile,
-  roles,
-  rolesMap,
-  saveCustomFrom,
-  setCustom,
-  setNowRole,
-} from '../promptsRole';
+import {getRoleMode} from '../promptsRole';
 import {globalConfig} from '../GlobalConfig';
 import _ from 'lodash';
 import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
@@ -86,8 +76,8 @@ class CommandHandler {
             '  • /role_info 当前角色的prompt引导词.\n' +
             '  • /system_custom 使用 [/system_custom 引导词] 来设置自定义(custom)角色的引导词，在切换到custom角色时使用该引导词.\n' +
             '  • /system_custom_clear 清空custom引导词\n' +
-            `当前使用的角色是： ${getNowRole().role} [ /role_${
-              getNowRole().shortName
+            `当前使用的角色是： ${getRoleMode().getNowRole().role} [ /role_${
+              getRoleMode().getNowRole().shortName
             } ]\n` +
             '对话上下文\n' +
             '  • /get_context 获取当前聊天上下文的的存档点.\n' +
@@ -107,8 +97,8 @@ class CommandHandler {
         break;
 
       case '/hot_load_prompt_json':
-        await loadFromJsonFile();
-        await loadCustomFromStorage(this._api.keyv);
+        await getRoleMode().loadFromJsonFile();
+        await getRoleMode().loadCustomFromStorage();
         await this._bot.sendMessage(msg.chat.id, 'ok');
         break;
 
@@ -116,11 +106,11 @@ class CommandHandler {
         await this._bot.sendMessage(
           msg.chat.id,
           'roles \n' +
-            `${roles
-              .map((T) => `${T.role} [ /role_${T.shortName} ]`)
+            `${getRoleMode()
+              .roles.map((T) => `${T.role} [ /role_${T.shortName} ]`)
               .join('\n')}\n` +
-            `now role is ${getNowRole().role} [ /role_${
-              getNowRole().shortName
+            `now role is ${getRoleMode().getNowRole().role} [ /role_${
+              getRoleMode().getNowRole().shortName
             } ]`
         );
         break;
@@ -128,7 +118,9 @@ class CommandHandler {
       case '/role':
         await this._bot.sendMessage(
           msg.chat.id,
-          `now role is ${getNowRole().role} [ /role_${getNowRole().shortName} ]`
+          `now role is ${getRoleMode().getNowRole().role} [ /role_${
+            getRoleMode().getNowRole().shortName
+          } ]`
         );
         break;
 
@@ -136,12 +128,12 @@ class CommandHandler {
         {
           await this._bot.sendMessage(
             msg.chat.id,
-            `now role is ${getNowRole().role} [ /role_${
-              getNowRole().shortName
+            `now role is ${getRoleMode().getNowRole().role} [ /role_${
+              getRoleMode().getNowRole().shortName
             } ]`
           );
-          const pp = getRolePrompt(getNowRole())
-            ? 'prompt:\n' + getRolePrompt(getNowRole())
+          const pp = getRoleMode().getNowRolePrompt()
+            ? 'prompt:\n' + getRoleMode().getNowRolePrompt()
             : 'no prompt';
           if (pp.length < 4096) {
             await this._bot.sendMessage(msg.chat.id, pp);
@@ -193,7 +185,7 @@ class CommandHandler {
       case '/system_custom':
         {
           if (text && text.length > 0) {
-            await setCustom(text, this._api.keyv);
+            await getRoleMode().setCustom(text);
             await this._bot.sendMessage(msg.chat.id, `ok`);
           } else {
             await this._bot.sendMessage(msg.chat.id, `failed`);
@@ -202,7 +194,7 @@ class CommandHandler {
         break;
 
       case '/system_custom_clear':
-        await setCustom('', this._api.keyv);
+        await getRoleMode().setCustom('');
         await this._bot.sendMessage(msg.chat.id, `ok`);
         break;
 
@@ -274,21 +266,21 @@ class CommandHandler {
       default:
         if (command.startsWith('/role_')) {
           const ro = command.replace(/^\/role_/, '');
-          const rn = rolesMap.get(ro);
+          const rn = getRoleMode().rolesMap.get(ro);
           if (rn) {
-            setNowRole(rn);
+            getRoleMode().setNowRole(rn);
             await this._bot.sendMessage(
               msg.chat.id,
-              `now role is ${getNowRole().role} [ /role_${
-                getNowRole().shortName
+              `now role is ${getRoleMode().getNowRole().role} [ /role_${
+                getRoleMode().getNowRole().shortName
               } ]`
             );
           } else {
             await this._bot.sendMessage(
               msg.chat.id,
-              `invalid role. now role is ${getNowRole().role} [ /role_${
-                getNowRole().shortName
-              } ]`
+              `invalid role. now role is ${
+                getRoleMode().getNowRole().role
+              } [ /role_${getRoleMode().getNowRole().shortName} ]`
             );
           }
           break;
