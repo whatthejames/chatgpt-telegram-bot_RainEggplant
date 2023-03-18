@@ -3,7 +3,7 @@ import {loadConfig} from './utils';
 import Keyv, {Store} from 'keyv';
 import QuickLRU from 'quick-lru';
 import {GlobalConfig, globalConfig} from './GlobalConfig';
-import {initRoleMode} from './promptsRole';
+import {initRoleMode} from './PromptsRole';
 import {ServerApp} from './server/app';
 import {BotBase} from './bot/BotBase';
 import {BotCommand} from './bot/BotCommand';

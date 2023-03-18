@@ -12,7 +12,7 @@ export interface RoleInfo {
 }
 
 export class RoleMode {
-  roles: RoleInfo[] = [
+  protected roles: RoleInfo[] = [
     {
       role: 'default',
       shortName: 'default',
@@ -25,9 +25,9 @@ export class RoleMode {
     },
   ];
 
-  rolesMap = new Map<string, RoleInfo>();
+  protected rolesMap = new Map<string, RoleInfo>();
 
-  nowRole_!: RoleInfo;
+  protected nowRole_!: RoleInfo;
 
   init = (roles_: RoleInfo[], nowRoleShortName?: string) => {
     this.roles = roles_;
@@ -42,6 +42,14 @@ export class RoleMode {
 
   constructor(protected storage: Keyv) {
     this.init(this.roles);
+  }
+
+  getRolesMap() {
+    return this.rolesMap;
+  }
+
+  getRoles() {
+    return this.roles;
   }
 
   getNowRole = () => {

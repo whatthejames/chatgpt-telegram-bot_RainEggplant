@@ -3,7 +3,7 @@ import {message} from 'telegraf/filters';
 import {ChatGPT} from '../api';
 import Keyv from 'keyv';
 import {Config} from '../types';
-import {getRoleMode} from '../promptsRole';
+import {getRoleMode} from '../PromptsRole';
 import {logWithTime} from '../utils';
 import {GlobalConfig, globalConfig} from '../GlobalConfig';
 import _ from 'lodash';
@@ -88,7 +88,8 @@ export class BotCommand {
       await ctx.sendMessage(
         'roles \n' +
           `${getRoleMode()
-            .roles.map((T) => `${T.role} [ /role_${T.shortName} ]`)
+            .getRoles()
+            .map((T) => `${T.role} [ /role_${T.shortName} ]`)
             .join('\n')}\n` +
           `now role is ${getRoleMode().getNowRole().role} [ /role_${
             getRoleMode().getNowRole().shortName
@@ -280,7 +281,7 @@ export class BotCommand {
       }
       if (ctx.message.text.startsWith('/role_')) {
         const ro = ctx.message.text.replace(/^\/role_/, '');
-        const rn = getRoleMode().rolesMap.get(ro);
+        const rn = getRoleMode().getRolesMap().get(ro);
         if (rn) {
           getRoleMode().setNowRole(rn);
           await ctx.sendMessage(

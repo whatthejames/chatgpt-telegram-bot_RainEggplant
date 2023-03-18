@@ -8,7 +8,7 @@ import {
   SendMessageOptions,
   UpsertMessageFunction,
 } from 'chatgpt';
-import {getRoleMode} from './promptsRole';
+import {getRoleMode} from './PromptsRole';
 import pTimeout from 'p-timeout';
 import {v4 as uuidv4} from 'uuid';
 import {createParser} from 'eventsource-parser';

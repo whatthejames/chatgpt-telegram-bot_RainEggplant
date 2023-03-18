@@ -15,7 +15,7 @@ import {
 } from './types';
 import {logWithTime} from './utils';
 import Keyv from 'keyv';
-import {getRoleMode} from './promptsRole';
+import {getRoleMode} from './PromptsRole';
 import {ChatGPTAPIOptions} from 'chatgpt';
 import {
   PatchedChatGPTAPI,
@@ -244,7 +244,7 @@ Current date: ${currentDate}`;
         parentMessageId,
       };
       if (roleShortName) {
-        const n = getRoleMode().rolesMap.get(roleShortName);
+        const n = getRoleMode().getRolesMap().get(roleShortName);
         if (n) {
           getRoleMode().setNowRole(n);
         }

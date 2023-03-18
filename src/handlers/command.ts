@@ -2,7 +2,7 @@
 import type {ChatGPT} from '../api';
 import {BotOptions} from '../types';
 import {logWithTime} from '../utils';
-import {getRoleMode} from '../promptsRole';
+import {getRoleMode} from '../PromptsRole';
 import {globalConfig} from '../GlobalConfig';
 import _ from 'lodash';
 import {PatchedChatGPTAPI} from '../PatchChatGPTAPI';
@@ -107,7 +107,8 @@ class CommandHandler {
           msg.chat.id,
           'roles \n' +
             `${getRoleMode()
-              .roles.map((T) => `${T.role} [ /role_${T.shortName} ]`)
+              .getRoles()
+              .map((T) => `${T.role} [ /role_${T.shortName} ]`)
               .join('\n')}\n` +
             `now role is ${getRoleMode().getNowRole().role} [ /role_${
               getRoleMode().getNowRole().shortName
@@ -266,7 +267,7 @@ class CommandHandler {
       default:
         if (command.startsWith('/role_')) {
           const ro = command.replace(/^\/role_/, '');
-          const rn = getRoleMode().rolesMap.get(ro);
+          const rn = getRoleMode().getRolesMap().get(ro);
           if (rn) {
             getRoleMode().setNowRole(rn);
             await this._bot.sendMessage(
