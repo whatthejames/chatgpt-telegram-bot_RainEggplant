@@ -1,0 +1,52 @@
+{
+  "debug": 1, // debug level: 0 - no debug, 1 - debug, 2 - verbose debug
+  "bot": {
+    "token": "6066722262:AAEKLxrVWxGzLhNZiyTdVCIShzA0LjLGvn8",
+    "groupIds": [], // allowed group ids, leave empty to allow all
+    "userIds": [], // allowed user ids, leave empty to allow all
+    "chatCmd": "/chat"
+  },
+  "api": {
+    "type": "unofficial", // "browser", "official", "unofficial": the type of the chatgpt api to use
+    "browser": {
+      // Please refer to "https://github.com/transitive-bullshit/chatgpt-api/blob/v3/docs/classes/ChatGPTAPIBrowser.md#parameters"
+      "email": "ACCOUNT_EMAIL",
+      "password": "ACCOUNT_PASSWORD",
+      "isGoogleLogin": false,
+      "isProAccount": false,
+      "executablePath": "",
+      "nopechaKey": "",
+      "captchaToken": "",
+      "userDataDir": "",
+      "timeoutMs": 120000 // set to 0 to disable
+    },
+    "official": {
+      // Please refer to "https://github.com/transitive-bullshit/chatgpt-api/blob/main/docs/classes/ChatGPTAPI.md#parameters"
+      "apiKey": "API_KEY",
+      "apiBaseUrl": "",
+      "completionParams": {
+        "model": "gpt-3.5-turbo",
+        "temperature": 0.8,
+        "top_p": 1,
+        "presence_penalty": 1
+      },
+      "systemMessage": "",
+      "maxModelTokens": 0, // set to 0 to use default
+      "maxResponseTokens": 0, // set to 0 to use default
+      "timeoutMs": 60000 // set to 0 to disable
+    },
+    "unofficial": {
+      // Please refer to "https://github.com/transitive-bullshit/chatgpt-api#usage---chatgptunofficialproxyapi"
+      "accessToken": "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",
+      "apiReverseProxyUrl": "https://chatgptapifree-1--m82359198.repl.co/v1/",
+      "model": "",
+      "timeoutMs": 120000 // set to 0 to disable
+    }
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 3033
+  },
+  "proxy": "", // You can also specify the proxy using the environment variable "HTTP_PROXY"
+  "redis": ""  // it can be "redis://127.0.0.1:6379"
+}
